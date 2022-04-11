@@ -13,7 +13,13 @@ RUN dnf -y update \
 # see: https://docs.bazel.build/versions/master/install-redhat.html#installing-on-centos-7
 RUN dnf config-manager --add-repo \
 https://copr.fedorainfracloud.org/coprs/vbatts/bazel/repo/epel-8/vbatts-bazel-epel-8.repo \
-&& dnf -y install bazel4 \
+&& dnf -y install bazel5 \
+&& dnf clean all \
+&& rm -rf /var/cache/dnf
+
+# Install Python
+RUN dnf -y update \
+&& dnf -y install python39-devel \
 && dnf clean all \
 && rm -rf /var/cache/dnf
 
@@ -23,7 +29,7 @@ COPY . .
 
 FROM devel AS build
 RUN bazel version
-RUN bazel build --curses=no --cxxopt=-std=c++17 --copt='-Wno-sign-compare' //...:all
+RUN bazel build -c opt --cxxopt=-std=c++17 ...
 
 FROM build AS test
-RUN bazel test -c opt --curses=no --cxxopt=-std=c++17 --copt='-Wno-sign-compare' //...:all
+RUN bazel test -c opt --cxxopt=-std=c++17 ...
