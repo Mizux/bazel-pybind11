@@ -1,0 +1,4 @@
+exports_files([
+    "pybind11_bazel.patch",
+])
+

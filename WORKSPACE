@@ -17,13 +17,15 @@ git_repository(
 git_repository(
     name = "pybind11_bazel",
     commit = "72cbbf1fbc830e487e3012862b7b720001b70672",
+    patches = ["//patches:pybind11_bazel.patch"],
+    patch_args = ["-p1"],
     remote = "https://github.com/pybind/pybind11_bazel.git",
 )
 
 new_git_repository(
     name = "pybind11",
     build_file = "@pybind11_bazel//:pybind11.BUILD",
-    tag = "v2.9.1",
+    tag = "v2.9.2",
     remote = "https://github.com/pybind/pybind11.git",
 )
 
