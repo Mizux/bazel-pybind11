@@ -1,0 +1,22 @@
+# Python wrapper for graph libraries.
+
+load("@pybind11_bazel//:build_defs.bzl", "pybind_extension")
+
+pybind_extension(
+    name = "bar",
+    srcs = ["bar.cpp"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//bar",
+    ],
+)
+
+py_test(
+    name = "bar_test",
+    size = "small",
+    srcs = ["bar_test.py"],
+    tags = ["unit"],
+    data = [
+        ":bar.so",
+    ],
+)
