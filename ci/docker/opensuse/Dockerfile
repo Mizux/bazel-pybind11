@@ -1,13 +1,19 @@
 # Create a virtual environment with all tools installed
 # ref: https://hub.docker.com/r/opensuse/tumbleweed
-FROM opensuse/leap AS env
+FROM opensuse/tumbleweed AS env
 LABEL maintainer="mizux.dev@gmail.com"
 # Install system build dependencies
 ENV PATH=/usr/local/bin:$PATH
 RUN zypper update -y \
-&& zypper install -y git gcc gcc-c++ zlib-devel bazel \
+&& zypper install -y git gcc gcc-c++ zlib-devel \
 && zypper clean -a
 ENV CC=gcc CXX=g++
+
+# https://software.opensuse.org/package/bazel4.2
+RUN zypper ar -Gf \
+https://download.opensuse.org/repositories/devel:tools:building/openSUSE_Factory/devel:tools:building.repo \
+&& zypper install -y bazel4.2 findutils \
+&& zypper clean -a
 
 # Install Python
 RUN zypper update -y \
