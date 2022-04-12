@@ -60,7 +60,7 @@ help:
 # Need to add cmd_distro to PHONY otherwise target are ignored since they do not
 # contain recipe (using FORCE do not work here)
 .PHONY: all
-all: amd64_build
+all: amd64
 
 # Delete all implicit rules to speed up makefile
 MAKEFLAGS += --no-builtin-rules
@@ -94,53 +94,83 @@ STAGES := env devel build test
 # $< first prerequist
 # $@ target name
 
-define make-stage-target =
-#$$(info STAGE: $1)
-.PHONY: $1
-#$$(info Create targets: $1 $(addsuffix _$1, $(DISTROS)).)
-targets_$1 = $(addsuffix _$1, $(DISTROS))
-.PHONY: $(targets_$1)
-$1: $(targets_$1)
-$(targets_$1): %_$1: docker/%/Dockerfile
-	#@docker image rm -f ${IMAGE}:$$*_$1 2>/dev/null
-	${DOCKER_BUILD_CMD} --target=$1 --tag ${IMAGE}:$$*_$1 -f $$< ..
+define build_stage =
+#$$(info build_stage: PLATFORM:'$1' DISTRO:'$2' STAGE:'$3')
 
-#$$(info Create targets: save_$1 $(addprefix save_, $(addsuffix _$1, $(DISTROS))) (debug).)
-save_targets_$1 = $(addprefix save_, $(addsuffix _$1, $(DISTROS)))
-.PHONY: save_$1 $(save_targets_$1)
-save_$1: $(save_targets_$1)
-$(save_targets_$1): save_%_$1: cache/%/docker_$1.tar
-cache/%/docker_$1.tar: %_$1
+.PHONY: $1_$2_$3
+$1_$2_$3: docker/$2/Dockerfile
+	#@docker image rm -f ${IMAGE}:$$@ 2>/dev/null
+	${DOCKER_BUILDX_CMD} --platform linux/$1 \
+ --tag ${IMAGE}:$$@ \
+ --target=$3 \
+ -f $$< \
+ ..
+
+.PHONY: save_$1_$2_$3
+save_$1_$2_$3: cache/$1/$2/docker_$3.tar
+cache/$1/$2/docker_$3.tar: $1_$2_$3
 	@rm -f $$@
-	mkdir -p cache/$$*
-	docker save ${IMAGE}:$$*_$1 -o $$@
+	mkdir -p cache/$1/$2
+	docker save ${IMAGE}:$$< -o $$@
 
-#$$(info Create targets: $(addprefix sh_, $(addsuffix _$1, $(DISTROS))) (debug).)
-sh_targets_$1 = $(addprefix sh_, $(addsuffix _$1, $(DISTROS)))
-.PHONY: $(sh_targets_$1)
-$(sh_targets_$1): sh_%_$1: %_$1
-	${DOCKER_RUN_CMD} -it --name ${IMAGE}_$$*_$1 ${IMAGE}:$$*_$1
+.PHONY: sh_$1_$2_$3
+sh_$1_$2_$3: $1_$2_$3
+	${DOCKER_RUN_CMD} \
+ -it \
+ --name ortools_$$< \
+ ${IMAGE}:$$<
 
-#$$(info Create targets: clean_$1 $(addprefix clean_, $(addsuffix _$1, $(DISTROS))).)
-clean_targets_$1 = $(addprefix clean_, $(addsuffix _$1, $(DISTROS)))
-.PHONY: clean_$1 $(clean_targets_$1)
-clean_$1: $(clean_targets_$1)
-$(clean_targets_$1): clean_%_$1:
-	docker image rm -f ${IMAGE}:$$*_$1 2>/dev/null
-	rm -f cache/$$*/docker_$1.tar
+.PHONY: clean_$1_$2_$3
+clean_$1_$2_$3:
+	docker image rm -f ${IMAGE}:$1_$2_$3 2>/dev/null
+	rm -f cache/$1/$2/docker_$3.tar
 endef
 
-$(foreach stage,$(STAGES),$(eval $(call make-stage-target,$(stage))))
+define build_distro =
+#$$(info build_distro: PLATFORM:'$1' DISTRO:'$2')
+
+$$(foreach stage,${STAGES},$$(eval $$(call build_stage,$1,$2,$${stage})))
+endef
+
+define build_platform =
+#$$(info build_platform: PLATFORM:'$1')
+
+$$(foreach distro,${DISTROS},$$(eval $$(call build_distro,$1,$${distro})))
+endef
+
+$(foreach platform,${PLATFORMS},$(eval $(call build_platform,${platform})))
+
+## MERGE ##
+define merge_stage =
+#$$(info merge_stage: PLATFORM:'$1' STAGE:'$2')
+
+.PHONY: $1_$2
+$1_$2: $(addprefix $1_, $(addsuffix _$2, ${DISTROS}))
+
+.PHONY: clean_$1_$2
+clean_$1_$2: $(addprefix clean_$1_, $(addsuffix _$2, ${DISTROS}))
+endef
+
+define merge_platform =
+#$$(info merge_platform: PLATFORM:'$1')
+
+$$(foreach stage,${STAGES},$$(eval $$(call merge_stage,$1,$${stage})))
+
+.PHONY: $1
+$1: $1_test
+
+.PHONY: clean_$1
+clean_$1: $(addprefix clean_$1_, ${STAGES})
+endef
+
+$(foreach platform,${PLATFORMS},$(eval $(call merge_platform,${platform})))
 
 ## CLEAN ##
-clean_targets = $(addprefix clean_, $(DISTROS))
-.PHONY: clean $(clean_targets)
-clean: $(clean_targets)
+.PHONY: clean
+clean: $(addprefix clean_, ${PLATFORMS})
 	docker container prune -f
 	docker image prune -f
-	-rmdir cache
-$(clean_targets): clean_%: $(addprefix clean_%_, $(STAGES))
-	-rmdir cache/$*
+	-rm -rf cache
 
 .PHONY: distclean
 distclean: clean
