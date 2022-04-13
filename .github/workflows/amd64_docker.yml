@@ -13,9 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        #platform: [amd64, arm64, riscv64]
+        platform: [amd64]
         distro: [alpine, archlinux, centos, debian, fedora, opensuse, ubuntu]
       fail-fast: false
     env:
+      PLATFORM: ${{ matrix.platform }}
       DISTRO: ${{ matrix.distro }}
     steps:
     - uses: actions/checkout@v2
@@ -24,10 +27,10 @@ jobs:
         docker info
         docker buildx ls
     - name: Build env image
-      run: make --directory=ci amd64_${DISTRO}_env
+      run: make --directory=ci ${PLATFORM}_${DISTRO}_env
     - name: Build devel project
-      run: make --directory=ci amd64_${DISTRO}_devel
+      run: make --directory=ci ${PLATFORM}_${DISTRO}_devel
     - name: Build project
-      run: make --directory=ci amd64_${DISTRO}_build
+      run: make --directory=ci ${PLATFORM}_${DISTRO}_build
     - name: Test project
-      run: make --directory=ci amd64_${DISTRO}_test
+      run: make --directory=ci ${PLATFORM}_${DISTRO}_test
