@@ -8,24 +8,28 @@ pros:
 * Most CI provide runner with docker and Makefile installed.
 
 cons:
+
 * Only GNU/Linux distro supported.
-* Could take few GiB (~30 GiB for all distro and all languages)
-  * ~500MiB OS + C++/CMake tools,
+* Could take few GiB.
 
 ## Usage
 
 To get the help simply type:
+
 ```sh
 make
 ```
 
 note: you can also use from top directory
+
 ```sh
 make --directory=ci
 ```
 
 ### Example
+
 For example to test inside an `Alpine` container:
+
 ```sh
 make alpine_test
 ```
@@ -35,3 +39,14 @@ make alpine_test
 Dockerfile is splitted in several stages.
 
 ![docker](docs/docker.svg)
+
+## Docker aarch64 on x86_64 machine
+
+You can build and run aarch64 docker container on a x86_64 by enabling qemu
+support:
+
+```sh
+docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+```
+
+ref: https://github.com/multiarch/qemu-user-static#getting-started
