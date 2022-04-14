@@ -4,9 +4,6 @@ name: amd64 Docker
 on:
   push:
   pull_request:
-  schedule:
-    # min hours day(month) month day(week)
-    - cron: '0 0 7,22 * *'
 
 jobs:
   bazel:
