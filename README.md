@@ -14,6 +14,7 @@ Github-CI:
 [amd64_docker_link]: https://github.com/Mizux/bazel-pybind11/actions/workflows/amd64_docker.yml
 
 # Introduction
+
 <nav for="project"> |
 <a href="#requirement">Requirement</a> |
 <a href="#codemap">Codemap</a> |
@@ -29,16 +30,19 @@ Bazel C++ pybind11 sample with tests and GitHub CI support.
 This project should run on GNU/Linux, MacOS and Windows.
 
 ## Requirement
+
 You'll need:
 
 * "Bazel >= 4.0".
 
 ## Codemap
+
 The project layout is as follow:
 
 * [WORKSPACE](WORKSPACE) Top-level for [Bazel](https://bazel.build) based build.
 
 ## Dependencies
+
 To complexify a little, this Bazel project is composed of three libraries (`foo`, `bar` and `foobar`)
 with the following dependencies:
 
@@ -50,32 +54,39 @@ foobarapp: foobar
 ```
 
 ## Build
+
 To build this example you should use:
 
 * on UNIX:
+
   ```sh
   bazel build --cxxopt=-std=c++17 ...
   ```
 
 * on Windows when using MSVC:
+
   ```sh
   bazel build --cxxopt="-std:c++17" ...
   ```
 
 ## Running Tests
+
 To build this example you should use:
 
 * on UNIX:
+
   ```sh
   bazel test --cxxopt=-std=c++17 ...
   ```
 
 * on Windows when using MSVC:
+
   ```sh
   bazel test --cxxopt="-std:c++17" ...
   ```
 
 ## CI Setup
+
 Please take a look at [.github/workflows](.github/workflows) to find the configuration file for each jobs.
 
 To install *bazel* on each hosted runner, follow these links:
@@ -90,26 +101,33 @@ ref: https://docs.github.com/en/actions/using-github-hosted-runners/customizing-
   ref: https://community.chocolatey.org/packages/bazel/
 
 ## Appendices
+
 Few links on the subject...
 
 ### Resources
+
 Project layout:
+
 * The Pitchfork Layout Revision 1 (cxx-pflR1)
 
 Bazel:
+
 * https://docs.bazel.build/versions
 
 ### Misc
+
 Image has been generated using [plantuml](http://plantuml.com/):
+
 ```bash
 plantuml -Tsvg docs/{file}.dot
 ```
 So you can find the dot source files in [docs](docs).
 
 ## License
+
 Apache 2. See the LICENSE file for details.
 
 ## Disclaimer
+
 This is not an official Google product, it is just code that happens to be
 owned by Google.
-
