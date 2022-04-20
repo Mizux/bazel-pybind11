@@ -10,6 +10,10 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.x'
     - name: Install Bazel
       run: choco install bazel
     - name: Check Bazel
