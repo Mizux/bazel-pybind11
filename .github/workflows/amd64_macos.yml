@@ -18,4 +18,4 @@ jobs:
     - name: Build
       run: bazel build --cxxopt=-std=c++17 //...:all
     - name: Test
-      run: bazel test --cxxopt=-std=c++17 //...:all
+      run: bazel test --test_output=errors --cxxopt=-std=c++17 //...:all
