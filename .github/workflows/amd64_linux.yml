@@ -20,6 +20,6 @@ jobs:
     - name: Check bazel
       run:  bazel version
     - name: Build
-      run: bazel build --cxxopt=-std=c++17 //...:all
+      run: bazel build -s --cxxopt=-std=c++17 //...:all
     - name: Test
       run: bazel test --test_output=errors --cxxopt=-std=c++17 //...:all
