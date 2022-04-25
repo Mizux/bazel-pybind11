@@ -1,19 +1,19 @@
 load("@rules_cc//cc:defs.bzl", "cc_library")
 
 cc_library(
-  name = "foo",
-  srcs = ["src/Foo.cpp"],
-  hdrs = ["include/foo/Foo.hpp"],
-  strip_include_prefix = "include",
-  visibility = ["//visibility:public"],
+    name = "foo",
+    srcs = ["src/Foo.cpp"],
+    hdrs = ["include/foo/Foo.hpp"],
+    strip_include_prefix = "include",
+    visibility = ["//visibility:public"],
 )
 
 cc_test(
-  name = "foo-test",
-  srcs = ["tests/foo_test.cpp"],
-  #copts = ["-Iexternal/gtest/include"],
-  deps = [
-    "@com_google_googletest//:gtest_main",
-    ":foo",
-  ],
+    name = "foo-test",
+    srcs = ["tests/foo_test.cpp"],
+    #copts = ["-Iexternal/gtest/include"],
+    deps = [
+        ":foo",
+        "@com_google_googletest//:gtest_main",
+    ],
 )
