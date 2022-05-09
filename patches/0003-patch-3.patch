@@ -1,0 +1,49 @@
+From 5ea890e1f26a59c76ad64eb524dceb87832ccfa3 Mon Sep 17 00:00:00 2001
+From: Corentin Le Molgat <corentinl@google.com>
+Date: Mon, 9 May 2022 18:01:42 +0200
+Subject: [PATCH 3/3] patch-3
+
+---
+ build_defs.bzl | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/build_defs.bzl b/build_defs.bzl
+index 1e55548..6763bc6 100644
+--- a/build_defs.bzl
++++ b/build_defs.bzl
+@@ -38,6 +38,10 @@ def pybind_extension(
+ 
+     native.cc_binary(
+         name = name + ".so",
++        target_compatible_with = select({
++          "@platforms//os:windows": ["@platforms//:incompatible"],
++          "//conditions:default": [],
++        }),
+         copts = copts + PYBIND_COPTS + ["-fvisibility=hidden"],
+         features = features + PYBIND_FEATURES,
+         linkopts = linkopts + select({
+@@ -50,6 +54,21 @@ def pybind_extension(
+         **kwargs
+     )
+ 
++    native.cc_binary(
++        name = name + ".pyd",
++        target_compatible_with = select({
++          "@platforms//os:windows": [],
++          "//conditions:default": ["@platforms//:incompatible"],
++        }),
++        copts = copts + PYBIND_COPTS,
++        features = features + PYBIND_FEATURES,
++        linkopts = linkopts,
++        linkshared = 1,
++        tags = tags,
++        deps = deps + PYBIND_DEPS,
++        **kwargs
++    )
++
+ # Builds a pybind11 compatible library. This can be linked to a pybind_extension.
+ def pybind_library(
+         name,
+-- 
+2.36.0.512.ge40c2bad7a-goog
+

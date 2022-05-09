@@ -15,8 +15,9 @@ py_test(
     name = "foo_test",
     size = "small",
     srcs = ["foo_test.py"],
-    data = [
-        ":foo.so",
-    ],
+    data = select({
+      "@platforms//os:windows": [":foo.pyd"],
+      "//conditions:default": [":foo.so"],
+    }),
     tags = ["unit"],
 )

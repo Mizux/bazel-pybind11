@@ -2,4 +2,5 @@ exports_files([
   "pybind11_bazel.patch",
   "0001-patch-1.patch",
   "0002-patch-2.patch",
+  "0003-patch-3.patch",
 ])
