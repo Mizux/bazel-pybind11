@@ -1,0 +1,34 @@
+From 5e488e8a1f5cbbc6237a2e125b90412a516c8f34 Mon Sep 17 00:00:00 2001
+From: Corentin Le Molgat <corentinl@google.com>
+Date: Mon, 9 May 2022 15:43:37 +0200
+Subject: [PATCH 2/2] patch-2
+
+---
+ python_configure.bzl | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/python_configure.bzl b/python_configure.bzl
+index 7809dce..c5724b3 100644
+--- a/python_configure.bzl
++++ b/python_configure.bzl
+@@ -161,6 +161,8 @@ def _get_python_bin(repository_ctx):
+ 
+     python_bin = repository_ctx.os.environ.get(_PYTHON_BIN_PATH)
+     if python_bin != None:
++        if _is_windows(repository_ctx):
++            python_bin = _norm_path(python_bin)
+         return python_bin
+ 
+     python_short_name = "python" + repository_ctx.attr.python_version
+@@ -196,6 +198,8 @@ def _get_python_lib(repository_ctx, python_bin):
+     """Gets the python lib path."""
+     python_lib = repository_ctx.os.environ.get(_PYTHON_LIB_PATH)
+     if python_lib != None:
++        if _is_windows(repository_ctx):
++            python_lib = _norm_path(python_lib)
+         return python_lib
+     print_lib = ("<<END\n" +
+                  "from __future__ import print_function\n" +
+-- 
+2.36.0.512.ge40c2bad7a-goog
+
