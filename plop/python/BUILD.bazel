@@ -1,0 +1,18 @@
+# Python wrapper for foo library.
+load("@rules_python//python:defs.bzl", "py_test", "py_library")
+
+py_library(
+  name = "ploplib",
+  srcs = ["mylib.py"],
+  deps = [],
+)
+
+py_test(
+  name = "plop_test",
+  size = "small",
+  srcs = ["plop_test.py"],
+  deps = [
+    ":ploplib",
+  ],
+  tags = ["unit"],
+)
