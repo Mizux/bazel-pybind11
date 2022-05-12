@@ -1,15 +1,23 @@
 #!/usr/bin/env python3
 '''Test APIs'''
 
+import sys
 import unittest
+
 import foo.python
 import foo.python.foo as pyfoo
 from foo.python.foo import Foo
 
 if __debug__:
+    print(f'python path: {sys.path}')
+
     print(f'foo.python: ${dir(foo.python)}')
+
     print(f'foo.python.foo: ${dir(foo.python.foo)}')
+    print(f'pyfoo: ${dir(pyfoo)}')
+
     print(f'foo.python.foo.Foo: ${dir(foo.python.foo.Foo)}')
+    print(f'pyfoo.Foo: ${dir(pyfoo.Foo)}')
 
 
 class TestFoo(unittest.TestCase):
