@@ -12,7 +12,7 @@ index 1e55548..6763bc6 100644
 --- a/build_defs.bzl
 +++ b/build_defs.bzl
 @@ -38,6 +38,10 @@ def pybind_extension(
- 
+
      native.cc_binary(
          name = name + ".so",
 +        target_compatible_with = select({
@@ -22,12 +22,12 @@ index 1e55548..6763bc6 100644
          copts = copts + PYBIND_COPTS + ["-fvisibility=hidden"],
          features = features + PYBIND_FEATURES,
          linkopts = linkopts + select({
-@@ -50,6 +54,21 @@ def pybind_extension(
+@@ -50,6 +66,33 @@ def pybind_extension(
          **kwargs
      )
- 
+
 +    native.cc_binary(
-+        name = name + ".pyd",
++        name = name + ".dll",
 +        target_compatible_with = select({
 +          "@platforms//os:windows": [],
 +          "//conditions:default": ["@platforms//:incompatible"],
@@ -41,9 +41,21 @@ index 1e55548..6763bc6 100644
 +        **kwargs
 +    )
 +
++    native.genrule(
++        name = name + "_pyd",
++        target_compatible_with = select({
++          "@platforms//os:windows": [],
++          "//conditions:default": ["@platforms//:incompatible"],
++        }),
++        srcs = [name + ".dll"],
++        outs = [name + ".pyd"],
++        cmd = "cp $< $@"
++    )
++
++
  # Builds a pybind11 compatible library. This can be linked to a pybind_extension.
  def pybind_library(
          name,
--- 
+--
 2.36.0.512.ge40c2bad7a-goog
 
