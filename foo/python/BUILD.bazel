@@ -3,8 +3,8 @@ load("@rules_python//python:defs.bzl", "py_test")
 load("@pybind11_bazel//:build_defs.bzl", "pybind_extension")
 
 pybind_extension(
-    name = "foo",
-    srcs = ["foo.cpp"],
+    name = "myfoo",
+    srcs = ["myfoo.cpp"],
     #visibility = ["//visibility:public"],
     deps = [
         "//foo",
@@ -16,8 +16,8 @@ py_test(
     size = "small",
     srcs = ["foo_test.py"],
     data = select({
-      "@platforms//os:windows": [":foo.pyd"],
-      "//conditions:default": [":foo.so"],
+      "@platforms//os:windows": [":myfoo.pyd"],
+      "//conditions:default": [":myfoo.so"],
     }),
     tags = ["unit"],
 )

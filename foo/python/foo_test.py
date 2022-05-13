@@ -5,18 +5,18 @@ import sys
 import unittest
 
 import foo.python
-import foo.python.foo as pyfoo
-from foo.python.foo import Foo
+import foo.python.myfoo as pyfoo
+from foo.python.myfoo import Foo
 
 if __debug__:
     print(f'python path: {sys.path}')
 
     print(f'foo.python: ${dir(foo.python)}')
 
-    print(f'foo.python.foo: ${dir(foo.python.foo)}')
+    print(f'foo.python.myfoo: ${dir(foo.python.myfoo)}')
     print(f'pyfoo: ${dir(pyfoo)}')
 
-    print(f'foo.python.foo.Foo: ${dir(foo.python.foo.Foo)}')
+    print(f'foo.python.myfoo.Foo: ${dir(foo.python.myfoo.Foo)}')
     print(f'pyfoo.Foo: ${dir(pyfoo.Foo)}')
 
 
