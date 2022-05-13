@@ -40,18 +40,9 @@ You'll need:
 The project layout is as follow:
 
 * [WORKSPACE](WORKSPACE) Top-level for [Bazel](https://bazel.build) based build.
-
-## Dependencies
-
-To complexify a little, this Bazel project is composed of three libraries (`foo`, `bar` and `foobar`)
-with the following dependencies:
-
-```sh
-foo:
-bar:
-foobar: foo bar
-foobarapp: foobar
-```
+* [plop/python](plop/python) Pure python library to check Python support.
+* [foo](foo) Simple C++ library.
+  * [python](foo/python) Python wrapper using pybind11.
 
 ## Build
 
