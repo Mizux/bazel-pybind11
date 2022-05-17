@@ -1,5 +1,7 @@
 # Create a virtual environment with all tools installed
 # ref: https://hub.docker.com/_/fedora
+# Fedora 36 do not provide bazel5
+# see: https://github.com/vbatts/copr-build-bazel/issues/18
 FROM fedora:latest AS env
 LABEL maintainer="mizux.dev@gmail.com"
 # Install system build dependencies
@@ -10,7 +12,7 @@ RUN dnf -y update \
 && dnf -y install gcc-c++ zlib-devel \
 && dnf -y install dnf-plugins-core \
 && dnf -y copr enable vbatts/bazel \
-&& dnf -y install bazel5 \
+&& dnf -y install bazel4 \
 && dnf clean all
 
 # Install Python
@@ -27,4 +29,5 @@ RUN bazel version
 RUN bazel build -c opt --cxxopt=-std=c++17 ...
 
 FROM build AS test
-RUN bazel test -c opt --cxxopt=-std=c++17 ...
+RUN ln -s /usr/bin/python3 /usr/bin/python
+RUN bazel test -c opt --cxxopt=-std=c++17 --test_output=errors ...
