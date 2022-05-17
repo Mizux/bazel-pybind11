@@ -15,6 +15,7 @@ py_test(
     name = "foo_test",
     size = "small",
     srcs = ["foo_test.py"],
+    python_version = "PY3",
     data = select({
       "@platforms//os:windows": [":myfoo.pyd"],
       "//conditions:default": [":myfoo.so"],
