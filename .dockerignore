@@ -6,11 +6,7 @@
 .github
 .clang-format
 
-ci/Makefile
-ci/docker
-ci/docs
-ci/cache
-ci/export
+ci/*
 
 AUTHORS
 CONTRIBUTING.md
