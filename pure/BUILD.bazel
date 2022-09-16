@@ -2,17 +2,18 @@
 load("@rules_python//python:defs.bzl", "py_test", "py_library")
 
 py_library(
-  name = "ploplib",
+  name = "mylib",
   srcs = ["mylib.py"],
   deps = [],
 )
 
 py_test(
-  name = "plop_test",
+  name = "mylib_test",
   size = "small",
-  srcs = ["plop_test.py"],
+  srcs = ["mylib_test.py"],
+  python_version = "PY3",
   deps = [
-    ":ploplib",
+    ":mylib",
   ],
   tags = ["unit"],
 )
