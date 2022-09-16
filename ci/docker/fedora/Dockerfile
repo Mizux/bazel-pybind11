@@ -29,5 +29,8 @@ RUN bazel version
 RUN bazel build -c opt --cxxopt=-std=c++17 ...
 
 FROM build AS test
-RUN ln -s /usr/bin/python3 /usr/bin/python
+# bazel4 always use `#!/usr/bin/env python`
+# bazel5 struggle to find any python[3] interpreter in PATH even if available
+# i.e. @rules_python//python:autodetecting_toolchain is broken
+RUN ln -s /usr/bin/python3 /usr/local/bin/python
 RUN bazel test -c opt --cxxopt=-std=c++17 --test_output=errors ...
