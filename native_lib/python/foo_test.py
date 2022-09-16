@@ -4,19 +4,19 @@
 import sys
 import unittest
 
-import foo.python
-import foo.python.myfoo as pyfoo
-from foo.python.myfoo import Foo
+import native_lib.python
+import native_lib.python.myfoo as pyfoo
+from native_lib.python.myfoo import Foo
 
 if __debug__:
     print(f'python path: {sys.path}')
 
-    print(f'foo.python: ${dir(foo.python)}')
+    print(f'foo.python: ${dir(native_lib.python)}')
 
-    print(f'foo.python.myfoo: ${dir(foo.python.myfoo)}')
+    print(f'foo.python.myfoo: ${dir(native_lib.python.myfoo)}')
     print(f'pyfoo: ${dir(pyfoo)}')
 
-    print(f'foo.python.myfoo.Foo: ${dir(foo.python.myfoo.Foo)}')
+    print(f'foo.python.myfoo.Foo: ${dir(native_lib.python.myfoo.Foo)}')
     print(f'pyfoo.Foo: ${dir(pyfoo.Foo)}')
 
 

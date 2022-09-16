@@ -7,7 +7,7 @@ pybind_extension(
     srcs = ["myfoo.cpp"],
     #visibility = ["//visibility:public"],
     deps = [
-        "//foo",
+        "//native_lib:foo",
     ],
 )
 
