@@ -2,15 +2,15 @@ load("@rules_cc//cc:defs.bzl", "cc_library")
 
 cc_library(
     name = "foo",
-    srcs = ["src/Foo.cpp"],
-    hdrs = ["include/foo/Foo.hpp"],
-    strip_include_prefix = "include",
+    srcs = ["foo.cpp"],
+    hdrs = ["foo/foo.hpp"],
+    strip_include_prefix = "",
     visibility = ["//visibility:public"],
 )
 
 cc_test(
-    name = "foo-test",
-    srcs = ["tests/foo_test.cpp"],
+    name = "foo_test",
+    srcs = ["foo_test.cpp"],
     #copts = ["-Iexternal/gtest/include"],
     deps = [
         ":foo",
