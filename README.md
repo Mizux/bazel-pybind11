@@ -40,9 +40,9 @@ You'll need:
 The project layout is as follow:
 
 * [WORKSPACE](WORKSPACE) Top-level for [Bazel](https://bazel.build) based build.
-* [plop/python](plop/python) Pure python library to check Python support.
-* [foo](foo) Simple C++ library.
-  * [python](foo/python) Python wrapper using pybind11.
+* [pure_lib](pure_lib) Pure python library to check Python support.
+* [native_lib](native_lib) Simple C++ library.
+  * [python](native_lib/python) Python wrapper using pybind11.
 
 ## Build
 
