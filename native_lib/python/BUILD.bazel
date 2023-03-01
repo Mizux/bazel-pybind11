@@ -5,7 +5,6 @@ load("@pybind11_bazel//:build_defs.bzl", "pybind_extension")
 pybind_extension(
     name = "myfoo",
     srcs = ["myfoo.cpp"],
-    #visibility = ["//visibility:public"],
     deps = [
         "//native_lib:foo",
     ],
