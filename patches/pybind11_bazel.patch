@@ -1,16 +1,16 @@
 diff --git a/build_defs.bzl b/build_defs.bzl
-index cde1e93..e8dba55 100644
+index cde1e93..993b538 100644
 --- a/build_defs.bzl
 +++ b/build_defs.bzl
-@@ -35,6 +35,7 @@ def pybind_extension
+@@ -35,12 +35,19 @@ def pybind_extension(
          linkopts = [],
          tags = [],
          deps = [],
++        py_deps = [],
 +        visibility = None,
          **kwargs):
      # Mark common dependencies as required for build_cleaner.
      tags = tags + ["req_dep=%s" % dep for dep in PYBIND_DEPS]
-@@ -41,6 +42,11 @@ def pybind_extension(
  
      native.cc_binary(
          name = name + ".so",
@@ -22,7 +22,7 @@ index cde1e93..e8dba55 100644
          copts = copts + PYBIND_COPTS + select({
              "@pybind11//:msvc_compiler": [],
              "//conditions:default": [
-@@ -59,6 +65,44 @@ def pybind_extension(
+@@ -59,6 +66,45 @@ def pybind_extension(
          **kwargs
      )
  
@@ -60,6 +60,7 @@ index cde1e93..e8dba55 100644
 +            "@platforms//os:windows": [":" + name + ".pyd"],
 +            "//conditions:default": [":" + name + ".so"],
 +        }),
++        deps = py_deps,
 +        visibility = visibility,
 +    )
 +
