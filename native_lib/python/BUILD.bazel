@@ -3,8 +3,8 @@ load("@rules_python//python:defs.bzl", "py_test")
 load("@pybind11_bazel//:build_defs.bzl", "pybind_extension")
 
 pybind_extension(
-    name = "myfoo",
-    srcs = ["myfoo.cpp"],
+    name = "pyfoo",
+    srcs = ["foo.cpp"],
     deps = [
         "//native_lib:foo",
     ],
@@ -15,6 +15,6 @@ py_test(
     size = "small",
     srcs = ["foo_test.py"],
     python_version = "PY3",
-    deps = [":myfoo"],
+    deps = [":pyfoo"],
     tags = ["unit"],
 )

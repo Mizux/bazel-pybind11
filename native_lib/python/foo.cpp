@@ -10,8 +10,8 @@ namespace py = pybind11;
 //PYBIND11_MAKE_OPAQUE(std::vector<std::pair<int, int>>);
 //PYBIND11_MAKE_OPAQUE(std::vector<std::vector<std::pair<int, int>>>);
 
-PYBIND11_MODULE(myfoo, m) {
-    m.doc() = "myfoo module"; // optional module docstring
+PYBIND11_MODULE(pyfoo, m) {
+    m.doc() = "pyfoo module"; // optional module docstring
 
     // Free function
     // Vector of String
