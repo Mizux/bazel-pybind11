@@ -32,7 +32,14 @@ COPY . .
 
 FROM devel AS build
 RUN bazel version
-RUN bazel build -c opt --cxxopt=-std=c++17 ...
+RUN bazel build \
+ -c opt \
+ --cxxopt="-std=c++17" \
+ ...
 
 FROM build AS test
-RUN bazel test -c opt --cxxopt=-std=c++17 --test_output=errors ...
+RUN bazel test \
+ -c opt \
+ --cxxopt="-std=c++17" \
+ --test_output=errors \
+ ...

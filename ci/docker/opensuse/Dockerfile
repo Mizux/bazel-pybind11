@@ -9,10 +9,11 @@ RUN zypper update -y \
 && zypper clean -a
 ENV CC=gcc CXX=g++
 
-# https://software.opensuse.org/package/bazel4.2
-RUN zypper ar -Gf \
-https://download.opensuse.org/repositories/devel:tools:building/openSUSE_Factory/devel:tools:building.repo \
-&& zypper install -y bazel4.2 findutils \
+# Install Bazel 6
+RUN zypper addrepo -Gf \
+https://download.opensuse.org/repositories/home:ftake:branches:M17N/openSUSE_Tumbleweed/home:ftake:branches:M17N.repo \
+&& zypper refresh \
+&& zypper install -y bazel6 \
 && zypper clean -a
 
 # Install Python
@@ -25,8 +26,16 @@ WORKDIR /home/project
 COPY . .
 
 FROM devel AS build
-RUN bazel version
-RUN bazel build -c opt --cxxopt=-std=c++17 ...
+RUN bazel6 version
+RUN bazel6 build \
+ -c opt \
+ --action_env=BAZEL_CXXOPTS="-std=c++17" \
+ --subcommands=true \
+ ...
 
 FROM build AS test
-RUN bazel test -c opt --cxxopt=-std=c++17 --test_output=errors ...
+RUN bazel6 test \
+ -c opt \
+ --action_env=BAZEL_CXXOPTS="-std=c++17" \
+ --test_output=errors \
+ ...
