@@ -33,6 +33,7 @@ RUN bazel version
 RUN bazel build \
  -c opt \
  --cxxopt="-std=c++17" \
+ --subcommands=true \
  ...
 
 FROM build AS test
