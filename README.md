@@ -4,14 +4,14 @@ Github-CI:
 [![Build Status][amd64_windows_status]][amd64_windows_link]
 [![Build Status][amd64_docker_status]][amd64_docker_link]
 
-[amd64_linux_status]: https://github.com/Mizux/bazel-pybind11/actions/workflows/amd64_linux.yml/badge.svg
-[amd64_linux_link]: https://github.com/Mizux/bazel-pybind11/actions/workflows/amd64_linux.yml
-[amd64_macos_status]: https://github.com/Mizux/bazel-pybind11/actions/workflows/amd64_macos.yml/badge.svg
-[amd64_macos_link]: https://github.com/Mizux/bazel-pybind11/actions/workflows/amd64_macos.yml
-[amd64_windows_status]: https://github.com/Mizux/bazel-pybind11/actions/workflows/amd64_windows.yml/badge.svg
-[amd64_windows_link]: https://github.com/Mizux/bazel-pybind11/actions/workflows/amd64_windows.yml
-[amd64_docker_status]: https://github.com/Mizux/bazel-pybind11/actions/workflows/amd64_docker.yml/badge.svg
-[amd64_docker_link]: https://github.com/Mizux/bazel-pybind11/actions/workflows/amd64_docker.yml
+[amd64_linux_status]: ./../../actions/workflows/amd64_linux.yml/badge.svg
+[amd64_linux_link]: ./../../actions/workflows/amd64_linux.yml
+[amd64_macos_status]: ./../../actions/workflows/amd64_macos.yml/badge.svg
+[amd64_macos_link]: ./../../actions/workflows/amd64_macos.yml
+[amd64_windows_status]: ./../../actions/workflows/amd64_windows.yml/badge.svg
+[amd64_windows_link]: ./../../actions/workflows/amd64_windows.yml
+[amd64_docker_status]: ./../../actions/workflows/amd64_docker.yml/badge.svg
+[amd64_docker_link]: ./../../actions/workflows/amd64_docker.yml
 
 # Introduction
 
