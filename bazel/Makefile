@@ -17,19 +17,11 @@ help:
 	@echo -e "${BOLD}MAKE TARGETS${RESET}"
 	@echo -e "\t${BOLD}help${RESET}: display this help and exit."
 	@echo
-	@echo -e "\t${BOLD}<platform>_<stage>${RESET}: build <stage> docker images for ALL DISTROS."
-	@echo -e "\t${BOLD}<target>${RESET}: build the docker image for a specific <target> (platform,distro,stage)."
-	@echo -e "\t${BOLD}save_<target>${RESET}: Save the <target> docker images."
-	@echo -e "\t${BOLD}sh_<target>${RESET}: run a container using the <target> docker image (debug purpose)."
-	@echo -e "\t${BOLD}clean_<target>${RESET}: Clean the docker image specified."
-	@echo
-	@echo -e "\t${BOLD}<target>${RESET}:"
-	@echo -e "\t\t${BOLD}<platform>_<distro>_<stage>${RESET}"
-	@echo
-	@echo -e "\t${BOLD}<platform>${RESET}:"
-	@echo -e "\t\t${BOLD}amd64${RESET}"
-	@echo -e "\t\t${BOLD}arm64${RESET}"
-	@echo -e "\t\t${BOLD}riscv64 (RISC-V 64bits, experimental)${RESET}"
+	@echo -e "\t${BOLD}<stage>${RESET}: build all <stage> docker images."
+	@echo -e "\t${BOLD}<distro>_<stage>${RESET}: build the <stage> docker image for a specific distro."
+	@echo -e "\t${BOLD}save_<stage>${RESET}: Save all <stage> docker images."
+	@echo -e "\t${BOLD}save_<distro>_<stage>${RESET}: Save the <stage> docker image for a specific distro."
+	@echo -e "\t${BOLD}sh_<distro>_<stage>${RESET}: run a container using the <stage> docker image (debug purpose)."
 	@echo
 	@echo -e "\t${BOLD}<distro>${RESET}:"
 	@echo -e "\t\t${BOLD}alpine${RESET} (edge)"
@@ -45,12 +37,37 @@ help:
 	@echo -e "\t\t${BOLD}devel${RESET}"
 	@echo -e "\t\t${BOLD}build${RESET}"
 	@echo -e "\t\t${BOLD}test${RESET}"
+	@echo -e "\te.g. 'make ubuntu_test'"
+	@echo
+	@echo -e "\tBuild using docker buildx with a platform specified."
+	@echo -e "\t${BOLD}<platform>_<stage>${RESET}: build <stage> docker images for ALL DISTROS."
+	@echo -e "\t${BOLD}<platform>_<distro>_<stage>${RESET}: build <stage> docker image for a specific distro."
+	@echo -e "\t${BOLD}save_<platform>_<stage>${RESET}: Save <stage> docker images for ALL DISTROS."
+	@echo -e "\t${BOLD}save_<platform>_<distro>_<stage>${RESET}: Save the <stage> docker image for a specific distro."
+	@echo -e "\t${BOLD}sh_<platform>_<distro>_<stage>${RESET}: run a container using the <stage> docker image specified (debug purpose)."
+	@echo -e "\t${BOLD}clean_<platform>_<distro>_<stage>${RESET}: Remove cache and docker image."
+	@echo -e "\t${BOLD}clean_platforms${RESET}: Remove ALL cache and docker image."
+	@echo
+	@echo -e "\tWith ${BOLD}<platform>${RESET}:"
+	@echo -e "\t\t${BOLD}amd64${RESET}: linux/amd64 (x86_64)"
+	@echo -e "\t\t${BOLD}386${RESET}: linux/386 (x86)"
+	@echo -e "\t\t${BOLD}arm${RESET}: linux/arm (armv7)"
+	@echo -e "\t\t${BOLD}arm64${RESET}: linux/arm64 (aarch64, arm64v8)"
+	@echo -e "\t\t${BOLD}mips${RESET}: linux/mips (mips 32bits)"
+	@echo -e "\t\t${BOLD}mipsle${RESET}: linux/mipsle (mips 32bits Little Endian)"
+	@echo -e "\t\t${BOLD}mips64${RESET}: linux/mips64 (mips 64bits)"
+	@echo -e "\t\t${BOLD}mips64le${RESET}: linux/mips64le (mips 64bits Little Endian)"
+	@echo -e "\t\t${BOLD}ppc64${RESET}: linux/ppc64 (PowerPC 64Bits)"
+	@echo -e "\t\t${BOLD}ppc64le${RESET}: linux/ppc64le (PowerPC 64Bits Little Endian)"
+	@echo -e "\t\t${BOLD}riscv64${RESET}: linux/riscv64 (RISC-V 64bits)"
+	@echo -e "\t\t${BOLD}s390x${RESET}: linux/s390x (IBM System/390x)"
 	@echo
 	@echo -e "\te.g. 'make amd64_ubuntu_test'"
+	@echo -e "\tDocker image unavailable: arm64_archlinux"
 	@echo
-	@echo -e "\t${BOLD}clean${RESET}: Remove cache and ALL docker images."
-	@echo -e "\t${BOLD}clean_<distro>${RESET}: Remove cache and docker images for the specified distro."
-	@echo -e "\t${BOLD}distclean${RESET}: Clean all docker images and remove all archives."
+	@echo -e "\tGlobal targets."
+	@echo -e "\t${BOLD}clean${RESET}: Remove ALL caches and docker images."
+	@echo -e "\t${BOLD}distclean${RESET}: Remove everything."
 	@echo
 	@echo -e "\t${BOLD}NOCACHE=1${RESET}: use 'docker build --no-cache' when building container (default use cache)."
 	@echo
@@ -87,12 +104,13 @@ DOCKER_RUN_CMD := docker run --rm --init --net=host
 PLATFORMS := amd64 arm64 riscv64
 # Currently supported distro
 DISTROS := alpine archlinux centos debian fedora opensuse ubuntu
-# List of stages
-STAGES := env devel build test
 
 # $* stem
 # $< first prerequist
 # $@ target name
+
+# List of stages
+STAGES := env devel build test
 
 define build_stage =
 #$$(info build_stage: PLATFORM:'$1' DISTRO:'$2' STAGE:'$3')
