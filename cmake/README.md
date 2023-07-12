@@ -22,10 +22,11 @@ make
 
 note: you can also use from top directory
 ```sh
-make --directory=ci
+make --directory=cmake
 ```
 
 ### Example
+
 For example to test inside an `Alpine` container:
 ```sh
 make alpine_test
@@ -35,9 +36,10 @@ make alpine_test
 
 Dockerfile is splitted in several stages.
 
-![docker](docs/deps.svg)
+![docker](docs/docker.svg)
 
 ### Run arm64v8 image on amd64 machine
+
 You can build and run `arm64v8` (i.e. `aarch64`) docker container on a `amd64` host (`x86_64`) by enabling qemu support:
 ```sh
 docker run --pull always --rm --privileged multiarch/qemu-user-static --reset -p yes
@@ -51,6 +53,7 @@ docker run --rm -it arm64v8/ubuntu
 ref: https://github.com/docker-library/official-images#architectures-other-than-amd64
 
 ### Docker buildx
+
 ref: https://docs.docker.com/buildx/working-with-buildx/
 
 Once you enable QEMU support (see above), you can list available platform using:
@@ -71,6 +74,7 @@ To control the version of CMake, instead of using the
 * Install it using the [pypi package cmake](https://pypi.org/project/cmake/) (need a python stack)
 
 ### Install prebuilt
+
 The recommended and faster way is to use the prebuilt version:
 
 ```Dockerfile
@@ -84,6 +88,7 @@ RUN wget "https://cmake.org/files/v3.26/cmake-3.26.4-linux-x86_64.sh" \
 **warning**: Since [CMake 3.20](https://cmake.org/files/v3.20/) Kitware use a lowercase `linux` instead of `Linux`.
 
 ### Build from source
+
 To build from source you can use the following snippet:
 
 ```Dockerfile
