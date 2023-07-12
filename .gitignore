@@ -1,6 +1,13 @@
 bazel-*
+build/
+build*/
+export/
+cache/
 
 __pycache__
 
 # EDITORS
+.vs/
+.vscode/
 *.swp
+*.user
