@@ -24,7 +24,7 @@ setup(
   packages=find_packages(),
   package_data={
   '@PYTHON_PROJECT@':[$<$<NOT:$<PLATFORM_ID:Windows>>:'.libs/*'>],
-  '@PYTHON_PROJECT@.foo':['$<TARGET_FILE_NAME:foo_pybind11>'],
+  '@PYTHON_PROJECT@.python':['$<TARGET_FILE_NAME:foo_pybind11>'],
   },
   include_package_data=True,
   classifiers=[
