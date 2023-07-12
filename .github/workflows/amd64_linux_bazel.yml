@@ -17,30 +17,30 @@ jobs:
           '--cxxopt="-std=c++17"']
       fail-fast: false
     steps:
-    - uses: actions/checkout@v3
-    - name: Setup Python
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Display Python version
-      run: python --version
-    - name: Install Bazel
-      run: |
-        curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
-        sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
-        echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
-        sudo apt-get update
-        sudo apt-get install bazel
-    - name: Check bazel
-      run:  bazel version
-    - name: Build
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Display Python version
+        run: python --version
+      - name: Install Bazel
+        run: |
+          curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
+          sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
+          echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+          sudo apt-get update
+          sudo apt-get install bazel
+      - name: Check bazel
+        run:  bazel version
+      - name: Build
         run: >
           bazel build
           -c opt
           ${{ matrix.option }}
           --subcommands=true
           ...
-    - name: Test
+      - name: Test
         run: >
           bazel test
           -c opt

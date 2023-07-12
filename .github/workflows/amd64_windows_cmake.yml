@@ -14,16 +14,36 @@ jobs:
     runs-on: ${{ matrix.runner }}
     #runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Check cmake
+      - uses: actions/checkout@v3
+      - name: Check cmake
         run: |
           cmake --version
           cmake -G || true
-    - name: Configure
-        run: cmake -S. -Bbuild -DCMAKE_CONFIGURATION_TYPES=Release -DCMAKE_INSTALL_PREFIX=install
-    - name: Build
-      run: cmake --build build --config Release --target ALL_BUILD -v
-    - name: Test
-      run: cmake --build build --config Release --target RUN_TESTS -v
-    - name: Install
-      run: cmake --build build --config Release --target INSTALL -v
+      - name: Configure
+        run: >
+          cmake
+          -S.
+          -Bbuild
+          -DCMAKE_CONFIGURATION_TYPES=Release
+          -DCMAKE_INSTALL_PREFIX=install
+      - name: Build
+        run: >
+          cmake
+          --build build
+          --config Release
+          --target ALL_BUILD
+          -v
+      - name: Test
+        run: >
+          cmake
+          --build build
+          --config Release
+          --target RUN_TESTS
+          -v
+      - name: Install
+        run: >
+          cmake
+          --build build
+          --config Release
+          --target INSTALL
+          -v
