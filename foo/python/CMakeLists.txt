@@ -17,3 +17,5 @@ elseif(UNIX)
 endif()
 target_link_libraries(foo_pybind11 PRIVATE ${PROJECT_NAMESPACE}::foo)
 add_library(${PROJECT_NAMESPACE}::foo_pybind11 ALIAS foo_pybind11)
+
+add_python_test(${CMAKE_CURRENT_SOURCE_DIR}/foo_test.py)
