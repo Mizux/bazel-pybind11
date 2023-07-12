@@ -31,7 +31,7 @@ RUN cmake --build build --target test -v
 FROM env AS install_env
 COPY --from=build /home/project/build/python/dist/*.whl ./
 RUN python3 -m pip install --find-links=. \
- cmakepybind11*.whl
+ bazelpybind11*.whl
 
 FROM install_env AS install_devel
 WORKDIR /home/samples

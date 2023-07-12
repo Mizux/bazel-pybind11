@@ -12,11 +12,11 @@ RUN yum -y update \
 && yum clean all \
 && rm -rf /var/cache/yum
 
-# Install CMake 3.22.2
-RUN wget --no-check-certificate "https://cmake.org/files/v3.22/cmake-3.22.2-linux-aarch64.sh" \
-&& chmod a+x cmake-3.22.2-linux-aarch64.sh \
-&& ./cmake-3.22.2-linux-aarch64.sh --prefix=/usr/local/ --skip-license \
-&& rm cmake-3.22.2-linux-aarch64.sh
+# Install CMake 3.26.4
+RUN wget --no-check-certificate "https://cmake.org/files/v3.26/cmake-3.26.4-linux-aarch64.sh" \
+&& chmod a+x cmake-3.26.4-linux-aarch64.sh \
+&& ./cmake-3.26.4-linux-aarch64.sh --prefix=/usr/local/ --skip-license \
+&& rm cmake-3.26.4-linux-aarch64.sh
 
 # Add the library src to our build env
 FROM env AS devel
@@ -33,7 +33,7 @@ RUN ./build-manylinux.sh test
 FROM env AS install_env
 COPY --from=build /home/project/build*/python/dist/*.whl ./
 RUN python3 -m pip install --find-links=. \
- cmakepybind11*.whl
+ bazelpybind11*.whl
 
 FROM install_env AS install_devel
 WORKDIR /home/sample
