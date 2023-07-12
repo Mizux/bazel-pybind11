@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 '''Test Package'''
 
-import bazelpybind11.python.pyfoo as pf
-from bazelpybind11.python.pyfoo import Foo
+import sys
+import bazelpybind11
+
+import bazelpybind11.foo.python.pyfoo as pf
+from bazelpybind11.foo.python.pyfoo import Foo
 
 print(f'python path: {sys.path}')
 
