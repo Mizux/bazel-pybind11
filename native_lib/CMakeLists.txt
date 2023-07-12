@@ -1,23 +1,23 @@
-add_library(Foo)
-target_sources(Foo
+add_library(foo)
+target_sources(foo
   PRIVATE
-    include/foo/Foo.hpp
-    src/Foo.cpp)
-target_include_directories(Foo
+    include/foo/foo.hpp
+    foo.cpp)
+target_include_directories(foo
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)
-target_compile_features(Foo PUBLIC cxx_std_17)
-set_target_properties(Foo PROPERTIES
+target_compile_features(foo PUBLIC cxx_std_17)
+set_target_properties(foo PROPERTIES
   VERSION ${PROJECT_VERSION}
-  PUBLIC_HEADER include/foo/Foo.hpp)
-#target_link_libraries(Foo PUBLIC ...)
-add_library(${PROJECT_NAMESPACE}::Foo ALIAS Foo)
+  PUBLIC_HEADER include/foo/foo.hpp)
+#target_link_libraries(foo PUBLIC ...)
+add_library(${PROJECT_NAMESPACE}::foo ALIAS foo)
 
-add_subdirectory(tests)
+add_cpp_test(${CMAKE_CURRENT_SOURCE_DIR}/foo_test.cpp)
 
 # Install
-install(TARGETS Foo
+install(TARGETS foo
   EXPORT ${PROJECT_NAME}Targets
   PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/foo
   )
