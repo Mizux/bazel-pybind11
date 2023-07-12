@@ -86,4 +86,7 @@ add_subdirectory(cmake/dependencies dependencies)
 
 include(deps)
 include(cpp)
+add_subdirectory(foo)
+
 include(python)
+add_subdirectory(foo/python)

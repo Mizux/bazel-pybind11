@@ -55,8 +55,8 @@ The project layout is as follow:
 
 * [WORKSPACE](WORKSPACE) Top-level for [Bazel](https://bazel.build) based build.
 * [pure_lib](pure_lib) Pure python library to check Python support.
-* [native_lib](native_lib) Simple C++ library.
-  * [python](native_lib/python) Python wrapper using pybind11.
+* [foo](foo) Simple C++ library.
+  * [python](foo/python) Python wrapper using pybind11.
 
 ## Build
 

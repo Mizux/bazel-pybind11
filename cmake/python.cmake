@@ -93,17 +93,13 @@ message(STATUS "Python project: ${PYTHON_PROJECT}")
 set(PYTHON_PROJECT_DIR ${PROJECT_BINARY_DIR}/python/${PYTHON_PROJECT})
 message(STATUS "Python project build path: ${PYTHON_PROJECT_DIR}")
 
-# Pybind11 all libraries
-foreach(SUBPROJECT IN ITEMS native_lib)
-  add_subdirectory(${SUBPROJECT}/python)
-endforeach()
-
 #######################
 ## Python Packaging  ##
 #######################
 #file(MAKE_DIRECTORY python/${PYTHON_PROJECT})
 file(GENERATE OUTPUT ${PYTHON_PROJECT_DIR}/__init__.py CONTENT "__version__ = \"${PROJECT_VERSION}\"\n")
-file(GENERATE OUTPUT ${PYTHON_PROJECT_DIR}/python/__init__.py CONTENT "")
+file(GENERATE OUTPUT ${PYTHON_PROJECT_DIR}/foo/__init__.py CONTENT "")
+file(GENERATE OUTPUT ${PYTHON_PROJECT_DIR}/foo/python/__init__.py CONTENT "")
 
 # setup.py.in contains cmake variable e.g. @PYTHON_PROJECT@ and
 # generator expression e.g. $<TARGET_FILE_NAME:foo_pybind11>
@@ -139,7 +135,7 @@ add_custom_command(
     ${PYTHON_PROJECT}/.libs
   COMMAND ${CMAKE_COMMAND} -E copy
     $<TARGET_FILE:foo_pybind11>
-    ${PYTHON_PROJECT}/python
+    ${PYTHON_PROJECT}/foo/python
   #COMMAND ${Python3_EXECUTABLE} setup.py bdist_egg bdist_wheel
   COMMAND ${Python3_EXECUTABLE} setup.py bdist_wheel
   COMMAND ${CMAKE_COMMAND} -E touch ${PROJECT_BINARY_DIR}/python/dist/timestamp
@@ -211,23 +207,4 @@ function(add_python_test FILE_NAME)
       WORKING_DIRECTORY ${VENV_DIR})
   endif()
   message(STATUS "Configuring test ${FILE_NAME} done")
-endfunction()
-
-# add_python_example()
-# CMake function to generate and build python example.
-# Parameters:
-#  the python filename
-# e.g.:
-# add_python_example(foo.py)
-function(add_python_example FILE_NAME)
-  message(STATUS "Configuring example ${FILE_NAME} ...")
-  get_filename_component(EXAMPLE_NAME ${FILE_NAME} NAME_WE)
-
-  if(BUILD_TESTING)
-    add_test(
-      NAME python_example_${EXAMPLE_NAME}
-      COMMAND ${VENV_Python3_EXECUTABLE} ${FILE_NAME}
-      WORKING_DIRECTORY ${VENV_DIR})
-  endif()
-  message(STATUS "Configuring example ${FILE_NAME} done")
 endfunction()
