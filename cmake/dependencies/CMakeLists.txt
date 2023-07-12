@@ -5,7 +5,6 @@ set(BUILD_SHARED_LIBS OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(BUILD_TESTING OFF)
 set(CMAKE_Fortran_COMPILER OFF)
-set(CMAKE_Fortran_COMPILER OFF)
 
 # ##############################################################################
 # pybind11
