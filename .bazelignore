@@ -1,2 +1,4 @@
 build
+build_make
+install_make
 build_cross

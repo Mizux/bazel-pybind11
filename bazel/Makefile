@@ -17,13 +17,14 @@ help:
 	@echo -e "${BOLD}MAKE TARGETS${RESET}"
 	@echo -e "\t${BOLD}help${RESET}: display this help and exit."
 	@echo
-	@echo -e "\t${BOLD}<stage>${RESET}: build all <stage> docker images."
-	@echo -e "\t${BOLD}<distro>_<stage>${RESET}: build the <stage> docker image for a specific distro."
-	@echo -e "\t${BOLD}save_<stage>${RESET}: Save all <stage> docker images."
-	@echo -e "\t${BOLD}save_<distro>_<stage>${RESET}: Save the <stage> docker image for a specific distro."
-	@echo -e "\t${BOLD}sh_<distro>_<stage>${RESET}: run a container using the <stage> docker image (debug purpose)."
+	@echo -e "\tBuild using docker and the host platform."
+	@echo -e "\t${BOLD}<distro>_<stage>${RESET}: build a <stage> docker image for a specific distro."
+	@echo -e "\t${BOLD}save_<distro>_<stage>${RESET}: Save a <stage> docker image for a specific distro."
+	@echo -e "\t${BOLD}sh_<distro>_<stage>${RESET}: run a container using the <stage> docker image specified (debug purpose)."
+	@echo -e "\t${BOLD}clean_<distro>_<stage>${RESET}: Remove cache and docker image."
+	@echo -e "\t${BOLD}clean_native${RESET}: Remove ALL caches and docker images."
 	@echo
-	@echo -e "\t${BOLD}<distro>${RESET}:"
+	@echo -e "\tWith ${BOLD}<distro>${RESET}:"
 	@echo -e "\t\t${BOLD}alpine${RESET} (edge)"
 	@echo -e "\t\t${BOLD}archlinux${RESET} (latest)"
 	@echo -e "\t\t${BOLD}centos${RESET} (latest)"
@@ -31,8 +32,9 @@ help:
 	@echo -e "\t\t${BOLD}fedora${RESET} (latest)"
 	@echo -e "\t\t${BOLD}opensuse${RESET} (tumbleweed)"
 	@echo -e "\t\t${BOLD}ubuntu${RESET} (rolling)"
+	@echo -e "\t\t${BOLD}all${RESET} trigger ALL DISTROS."
 	@echo
-	@echo -e "\t${BOLD}<stage>${RESET}:"
+	@echo -e "\tWith ${BOLD}<stage>${RESET}:"
 	@echo -e "\t\t${BOLD}env${RESET}"
 	@echo -e "\t\t${BOLD}devel${RESET}"
 	@echo -e "\t\t${BOLD}build${RESET}"
@@ -61,7 +63,6 @@ help:
 	@echo -e "\t\t${BOLD}ppc64le${RESET}: linux/ppc64le (PowerPC 64Bits Little Endian)"
 	@echo -e "\t\t${BOLD}riscv64${RESET}: linux/riscv64 (RISC-V 64bits)"
 	@echo -e "\t\t${BOLD}s390x${RESET}: linux/s390x (IBM System/390x)"
-	@echo
 	@echo -e "\te.g. 'make amd64_ubuntu_test'"
 	@echo -e "\tDocker image unavailable: arm64_archlinux"
 	@echo
@@ -77,7 +78,7 @@ help:
 # Need to add cmd_distro to PHONY otherwise target are ignored since they do not
 # contain recipe (using FORCE do not work here)
 .PHONY: all
-all: amd64
+all: all_test
 
 # Delete all implicit rules to speed up makefile
 MAKEFLAGS += --no-builtin-rules
@@ -100,8 +101,6 @@ DOCKER_BUILDX_CMD := docker buildx build
 endif
 DOCKER_RUN_CMD := docker run --rm --init --net=host
 
-# Currently supported platform
-PLATFORMS := amd64 arm64 riscv64
 # Currently supported distro
 DISTROS := alpine archlinux centos debian fedora opensuse ubuntu
 
@@ -109,86 +108,126 @@ DISTROS := alpine archlinux centos debian fedora opensuse ubuntu
 # $< first prerequist
 # $@ target name
 
-# List of stages
+############
+## STAGES ##
+############
 STAGES := env devel build test
 
-define build_stage =
-#$$(info build_stage: PLATFORM:'$1' DISTRO:'$2' STAGE:'$3')
+define make-stage-target =
+#$$(info STAGE: $1)
+#$$(info Create targets: all_$1 $(addsuffix _$1, $(DISTROS)).)
+targets_$1 = $(addsuffix _$1, $(DISTROS))
+.PHONY: all_$1 $$(targets_$1)
+all_$1: $$(targets_$1)
+$$(targets_$1): %_$1: docker/%/Dockerfile
+	#@docker image rm -f ${IMAGE}:$$*_$1 2>/dev/null
+	${DOCKER_BUILD_CMD} --target=$1 --tag ${IMAGE}:$$*_$1 -f $$< ..
 
-.PHONY: $1_$2_$3
-$1_$2_$3: docker/$2/Dockerfile
-	#@docker image rm -f ${IMAGE}:$$@ 2>/dev/null
-	${DOCKER_BUILDX_CMD} --platform linux/$1 \
- --tag ${IMAGE}:$$@ \
- --target=$3 \
- -f $$< \
- ..
-
-.PHONY: save_$1_$2_$3
-save_$1_$2_$3: cache/$1/$2/docker_$3.tar
-cache/$1/$2/docker_$3.tar: $1_$2_$3
+#$$(info Create targets: save_all_$1 $(addprefix save_, $(addsuffix _$1, $(DISTROS))) (debug).)
+save_targets_$1 = $(addprefix save_, $(addsuffix _$1, $(DISTROS)))
+.PHONY: save_all_$1 $$(save_targets_$1)
+save_all_$1: $$(save_targets_$1)
+$$(save_targets_$1): save_%_$1: cache/%/docker_$1.tar
+cache/%/docker_$1.tar: %_$1
 	@rm -f $$@
-	mkdir -p cache/$1/$2
-	docker save ${IMAGE}:$$< -o $$@
+	mkdir -p cache/$$*
+	docker save ${IMAGE}:$$*_$1 -o $$@
 
-.PHONY: sh_$1_$2_$3
-sh_$1_$2_$3: $1_$2_$3
-	${DOCKER_RUN_CMD} \
- -it \
- --name ortools_$$< \
- ${IMAGE}:$$<
+#$$(info Create targets: $(addprefix sh_, $(addsuffix _$1, $(DISTROS))) (debug).)
+sh_targets_$1 = $(addprefix sh_, $(addsuffix _$1, $(DISTROS)))
+.PHONY: $$(sh_targets_$1)
+$$(sh_targets_$1): sh_%_$1: %_$1
+	${DOCKER_RUN_CMD} -it --name ${IMAGE}_$$*_$1 ${IMAGE}:$$*_$1
 
-.PHONY: clean_$1_$2_$3
-clean_$1_$2_$3:
-	docker image rm -f ${IMAGE}:$1_$2_$3 2>/dev/null
-	rm -f cache/$1/$2/docker_$3.tar
+#$$(info Create targets: clean_all_$1 $(addprefix clean_, $(addsuffix _$1, $(DISTROS))).)
+clean_targets_$1 = $(addprefix clean_, $(addsuffix _$1, $(DISTROS)))
+.PHONY: clean_all_$1 $$(clean_targets_$1)
+clean_all_$1: $$(clean_targets_$1)
+$$(clean_targets_$1): clean_%_$1:
+	docker image rm -f ${IMAGE}:$$*_$1 2>/dev/null
+	rm -f cache/$$*/docker_$1.tar
 endef
 
-define build_distro =
-#$$(info build_distro: PLATFORM:'$1' DISTRO:'$2')
-
-$$(foreach stage,${STAGES},$$(eval $$(call build_stage,$1,$2,$${stage})))
-endef
-
-define build_platform =
-#$$(info build_platform: PLATFORM:'$1')
-
-$$(foreach distro,${DISTROS},$$(eval $$(call build_distro,$1,$${distro})))
-endef
-
-$(foreach platform,${PLATFORMS},$(eval $(call build_platform,${platform})))
+$(foreach stage,$(STAGES),$(eval $(call make-stage-target,$(stage))))
 
 ## MERGE ##
-define merge_stage =
-#$$(info merge_stage: PLATFORM:'$1' STAGE:'$2')
+.PHONY: clean_all
+clean_all: $(addprefix clean_all_, $(STAGES))
+	rm -f $(addprefix cache/, $(DISTROS))
 
-.PHONY: $1_$2
-$1_$2: $(addprefix $1_, $(addsuffix _$2, ${DISTROS}))
+##############
+## PLATFORM ##
+##############
+# ref: https://go.dev/doc/install/source#environment
+# ref: https://github.com/containerd/containerd/blob/269548fa27e0089a8b8278fc4fc781d7f65a939b/platforms/platforms.go#L80-L94
+PLATFORMS := \
+ 386 amd64 \
+ arm arm64 \
+ mips mipsle mips64 mips64le \
+ ppc64 ppc64le \
+ riscv64 \
+ s390x
 
-.PHONY: clean_$1_$2
-clean_$1_$2: $(addprefix clean_$1_, $(addsuffix _$2, ${DISTROS}))
+define make-platform-stage-target =
+#$$(info PLATFORM: '$1' STAGE: '$2')
+#$$(info Create targets: $1_all_$2 $(addprefix $1_, $(addsuffix _$2, $(DISTROS))).)
+targets_$1_$2 = $(addprefix $1_, $(addsuffix _$2, $(DISTROS)))
+.PHONY: $1_all_$2 $$(targets_$1_$2)
+$1_all_$2: $$(targets_$1_$2)
+$$(targets_$1_$2): $1_%_$2: docker/%/Dockerfile
+	#@docker image rm -f ${IMAGE}:$1_$$*_$2 2>/dev/null
+	${DOCKER_BUILDX_CMD} --platform linux/$1 --target=$2 --tag ${IMAGE}:$1_$$*_$2 -f $$< ..
+
+#$$(info Create targets: save_$1_all_$2 $(addprefix save_$1_, $(addsuffix _$2, $(DISTROS))) (debug).)
+save_targets_$1_$2 = $(addprefix save_$1_, $(addsuffix _$2, $(DISTROS)))
+.PHONY: save_$1_all_$2 $$(save_targets_$1_$2)
+save_$1_all_$2: $$(save_targets_$1_$2)
+$$(save_targets_$1_$2): save_$1_%_$2: cache/$1/%/docker_$2.tar
+cache/$1/%/docker_$2.tar: $1_%_$2
+	@rm -f $$@
+	mkdir -p cache/$1/$$*
+	docker save ${IMAGE}:$1_$$*_$2 -o $$@
+
+#$$(info Create targets: $(addprefix sh_$1_, $(addsuffix _$2, $(DISTROS))) (debug).)
+sh_targets_$1_$2 = $(addprefix sh_$1_, $(addsuffix _$2, $(DISTROS)))
+.PHONY: $$(sh_targets_$1_$2)
+$$(sh_targets_$1_$2): sh_$1_%_$2: $1_%_$2
+	${DOCKER_RUN_CMD} --platform linux/$1 -it --name ${IMAGE}_$1_$$*_$2 ${IMAGE}:$1_$$*_$2
+
+#$$(info Create targets: clean_$1_all_$2 $(addprefix clean_$1_, $(addsuffix _$2, $(DISTROS))).)
+clean_targets_$1_$2 = $(addprefix clean_$1_, $(addsuffix _$2, $(DISTROS)))
+.PHONY: clean_$1_all_$2 $$(clean_targets_$1_$2)
+clean_$1_all_$2: $$(clean_targets_$1_$2)
+$$(clean_targets_$1_$2): clean_$1_%_$2:
+	docker image rm -f ${IMAGE}:$1_$$*_$2 2>/dev/null
+	rm -f cache/$1/$$*/docker_$2.tar
 endef
 
-define merge_platform =
-#$$(info merge_platform: PLATFORM:'$1')
+define make-platform-target =
+#$$(info PLATFORM: $1)
+$(foreach stage,$(STAGES),$(eval $(call make-platform-stage-target,$1,$(stage))))
 
-$$(foreach stage,${STAGES},$$(eval $$(call merge_stage,$1,$${stage})))
-
-.PHONY: $1
-$1: $1_test
-
+# merge
 .PHONY: clean_$1
-clean_$1: $(addprefix clean_$1_, ${STAGES})
+clean_$1: $(addprefix clean_$1_all_, $(STAGES))
+	-rmdir $(addprefix cache/$1/, $(DISTROS))
+	-rmdir cache/$1
 endef
 
-$(foreach platform,${PLATFORMS},$(eval $(call merge_platform,${platform})))
+$(foreach platform,$(PLATFORMS),$(eval $(call make-platform-target,$(platform))))
 
+## MERGE ##
+.PHONY: clean_platforms
+clean_platforms: $(addprefix clean_, $(PLATFORMS))
+
+###########
 ## CLEAN ##
+###########
 .PHONY: clean
-clean: $(addprefix clean_, ${PLATFORMS})
+clean: clean_all clean_platforms
 	docker container prune -f
 	docker image prune -f
-	-rm -rf cache
+	-rmdir cache
 
 .PHONY: distclean
 distclean: clean
