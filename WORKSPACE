@@ -11,7 +11,7 @@ git_repository(
 load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
 bazel_skylib_workspace()
 
-## Bazel Platforms rules.
+## Bazel rules.
 git_repository(
     name = "platforms",
     tag = "0.0.6",
@@ -26,7 +26,7 @@ git_repository(
 
 git_repository(
     name = "rules_python",
-    tag = "0.16.2",
+    tag = "0.23.1",
     remote = "https://github.com/bazelbuild/rules_python.git",
 )
 
