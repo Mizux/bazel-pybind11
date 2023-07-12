@@ -1,17 +1,28 @@
 Github-CI:
-[![Build Status][amd64_linux_status]][amd64_linux_link]
-[![Build Status][amd64_macos_status]][amd64_macos_link]
-[![Build Status][amd64_windows_status]][amd64_windows_link]
-[![Build Status][amd64_docker_status]][amd64_docker_link]
+| OS      | Bazel | CMake |
+|:------- | :---: | :---: |
+| Linux   | [![Build Status][amd64_linux_bazel_status]][amd64_linux_bazel_link] | [![Build Status][amd64_linux_cmake_status]][amd64_linux_cmake_link] |
+| MacOS   | [![Build Status][amd64_macos_bazel_status]][amd64_macos_bazel_link] | [![Build Status][amd64_macos_cmake_status]][amd64_macos_cmake_link] |
+| Windows | [![Build Status][amd64_windows_bazel_status]][amd64_windows_bazel_link] | [![Build Status][amd64_windows_cmake_status]][amd64_windows_cmake_link] |
+| Docker  | [![Build Status][amd64_docker_bazel_status]][amd64_docker_bazel_link] | [![Build Status][amd64_docker_cmake_status]][amd64_docker_cmake_link] |
 
-[amd64_linux_status]: ./../../actions/workflows/amd64_linux.yml/badge.svg
-[amd64_linux_link]: ./../../actions/workflows/amd64_linux.yml
-[amd64_macos_status]: ./../../actions/workflows/amd64_macos.yml/badge.svg
-[amd64_macos_link]: ./../../actions/workflows/amd64_macos.yml
-[amd64_windows_status]: ./../../actions/workflows/amd64_windows.yml/badge.svg
-[amd64_windows_link]: ./../../actions/workflows/amd64_windows.yml
-[amd64_docker_status]: ./../../actions/workflows/amd64_docker.yml/badge.svg
-[amd64_docker_link]: ./../../actions/workflows/amd64_docker.yml
+[amd64_linux_bazel_status]: ./../../actions/workflows/amd64_linux_bazel.yml/badge.svg
+[amd64_linux_bazel_link]: ./../../actions/workflows/amd64_linux_bazel.yml
+[amd64_macos_bazel_status]: ./../../actions/workflows/amd64_macos_bazel.yml/badge.svg
+[amd64_macos_bazel_link]: ./../../actions/workflows/amd64_macos_bazel.yml
+[amd64_windows_bazel_status]: ./../../actions/workflows/amd64_windows_bazel.yml/badge.svg
+[amd64_windows_bazel_link]: ./../../actions/workflows/amd64_windows_bazel.yml
+[amd64_docker_bazel_status]: ./../../actions/workflows/amd64_docker_bazel.yml/badge.svg
+[amd64_docker_bazel_link]: ./../../actions/workflows/amd64_docker_bazel.yml
+
+[amd64_linux_cmake_status]: ./../../actions/workflows/amd64_linux_cmake.yml/badge.svg
+[amd64_linux_cmake_link]: ./../../actions/workflows/amd64_linux_cmake.yml
+[amd64_macos_cmake_status]: ./../../actions/workflows/amd64_macos_cmake.yml/badge.svg
+[amd64_macos_cmake_link]: ./../../actions/workflows/amd64_macos_cmake.yml
+[amd64_windows_cmake_status]: ./../../actions/workflows/amd64_windows_cmake.yml/badge.svg
+[amd64_windows_cmake_link]: ./../../actions/workflows/amd64_windows_cmake.yml
+[amd64_docker_cmake_status]: ./../../actions/workflows/amd64_docker_cmake.yml/badge.svg
+[amd64_docker_cmake_link]: ./../../actions/workflows/amd64_docker_cmake.yml
 
 # Introduction
 
@@ -20,20 +31,23 @@ Github-CI:
 <a href="#codemap">Codemap</a> |
 <a href="#dependencies">Dependencies</a> |
 <a href="#build">Build</a> |
-<a href="ci/README.md">CI</a> |
+<a href="bazel/README.md">Bazel CI</a> |
+<a href="cmake/README.md">CMake CI</a> |
 <a href="#appendices">Appendices</a> |
 <a href="#license">License</a> |
 </nav>
 
-Bazel C++ pybind11 sample with tests and GitHub CI support.
-
+Bazel C++ and pybind11 sample with tests and GitHub CI support.<br>
 This project should run on GNU/Linux, MacOS and Windows.
+
+note: A CMake support is also provided as comparison
 
 ## Requirement
 
 You'll need:
 
-* "Bazel >= 4.0".
+* "Bazel >= 6.0".
+* "CMake >= 3.25".
 
 ## Codemap
 
@@ -51,13 +65,13 @@ To build this example you should use:
 * on UNIX:
 
   ```sh
-  bazel build --cxxopt=-std=c++17 ...
+  bazel build -c opt --action_env=BAZEL_CXXOPTS="-std=c++17" --subcommands=true ...
   ```
 
 * on Windows when using MSVC:
 
   ```sh
-  bazel build --cxxopt="-std:c++17" ...
+  bazel build -c opt --cxxopt="/std:c++17" --subcommands=true ...
   ```
 
 ## Running Tests
@@ -67,13 +81,13 @@ To build this example you should use:
 * on UNIX:
 
   ```sh
-  bazel test --cxxopt=-std=c++17 ...
+  bazel test -c opt --action_env=BAZEL_CXXOPTS="-std=c++17" --test_output=all ...
   ```
 
 * on Windows when using MSVC:
 
   ```sh
-  bazel test --cxxopt="-std:c++17" ...
+  bazel test -c opt --cxxopt="/std:c++17" --test_output=all ...
   ```
 
 ## CI Setup
