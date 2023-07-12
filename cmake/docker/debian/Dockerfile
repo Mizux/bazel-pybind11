@@ -10,7 +10,8 @@ RUN apt-get update -qq \
 
 # Install Python
 RUN apt-get update -qq \
-&& apt-get install -yq python3-dev python3-pip python3-venv \
+&& apt-get install -yq \
+ python3-dev python3-pip python3-venv python3-virtualenv \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -31,7 +32,9 @@ RUN cmake --build build --target test -v
 # Test install rules
 FROM env AS install_env
 COPY --from=build /home/project/build/python/dist/*.whl ./
-RUN python3 -m pip install --find-links=. \
+RUN python3 -m pip install \
+ --find-links=. \
+ --break-system-packages \
  bazelpybind11*.whl
 
 FROM install_env AS install_devel

@@ -6,7 +6,8 @@ ENV PATH=/usr/local/bin:$PATH
 RUN pacman -Syu --noconfirm git base-devel cmake
 
 # Install Python
-RUN pacman -Syu --noconfirm python python-pip
+RUN pacman -Syu --noconfirm \
+ python python-pip python-setuptools python-virtualenv
 
 # Add the library src to our build env
 FROM env AS devel
@@ -25,7 +26,9 @@ RUN cmake --build build --target test -v
 # Test install rules
 FROM env AS install_env
 COPY --from=build /home/project/build/python/dist/*.whl ./
-RUN python3 -m pip install --find-links=. \
+RUN python3 -m pip install \
+ --find-links=. \
+ --break-system-packages \
  bazelpybind11*.whl
 
 FROM install_env AS install_devel
