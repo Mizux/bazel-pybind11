@@ -7,16 +7,20 @@
 .clang-format
 
 ci/*
+bazel/docker
+cmake/docker
+**/Makefile
 
 AUTHORS
 CONTRIBUTING.md
 CONTRIBUTORS
 LICENSE
-README.md
-docs
+**/README.md
+**/docs
 
 # Native cmake build
 bazel-*/
+build*/
 
 # Editor directories and files
 *.user
