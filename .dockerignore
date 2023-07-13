@@ -18,7 +18,7 @@ LICENSE
 **/README.md
 **/docs
 
-# Native cmake build
+# Native build
 bazel-*/
 build*/
 

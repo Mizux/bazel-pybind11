@@ -81,13 +81,13 @@ To build this example you should use:
 * on UNIX:
 
   ```sh
-  bazel test -c opt --action_env=BAZEL_CXXOPTS="-std=c++17" --test_output=all ...
+  bazel test -c opt --action_env=BAZEL_CXXOPTS="-std=c++17" --test_output=errors --nocache_test_results ...
   ```
 
 * on Windows when using MSVC:
 
   ```sh
-  bazel test -c opt --cxxopt="/std:c++17" --test_output=all ...
+  bazel test -c opt --cxxopt="/std:c++17" --test_output=errors --nocache_test_results ...
   ```
 
 ## CI Setup
