@@ -8,6 +8,7 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
+        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
         option: [
           '',
           '--repo_env=BAZEL_CXXOPTS="-std=c++17"',
@@ -16,6 +17,12 @@ jobs:
       fail-fast: false
     steps:
       - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Display Python version
+        run: python --version
       - name: Install Bazel
         run: |
           brew update
