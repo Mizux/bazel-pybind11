@@ -5,6 +5,16 @@
 #include <utility>
 
 namespace bp11::foo {
+void freeFunction(int level) {
+  std::cout << "[" << level << "] Enter " << __func__ << "(int)" << std::endl;
+  std::cout << "[" << level << "] Exit " << __func__ << "(int)" << std::endl;
+}
+
+void freeFunction(int64_t level) {
+  std::cout << "[" << level << "] Enter " << __func__ << "(int64_t)" << std::endl;
+  std::cout << "[" << level << "] Exit " << __func__ << "(int64_t)" << std::endl;
+}
+
 std::vector<std::string> stringVectorOutput(int level) {
   std::cout << "[" << level << "] Enter " << __func__ << "()" << std::endl;
   std::vector<std::string> result(level, std::to_string(level));
@@ -143,16 +153,6 @@ int pairJaggedArrayRefInput(const std::vector<std::vector<std::pair<int, int>>>&
   std::cout << "}" << std::endl;
   std::cout << "Exit " << __func__ << "()" << std::endl;
   return data.size();
-}
-
-void freeFunction(int level) {
-  std::cout << "[" << level << "] Enter " << __func__ << "(int)" << std::endl;
-  std::cout << "[" << level << "] Exit " << __func__ << "(int)" << std::endl;
-}
-
-void freeFunction(int64_t level) {
-  std::cout << "[" << level << "] Enter " << __func__ << "(int64_t)" << std::endl;
-  std::cout << "[" << level << "] Exit " << __func__ << "(int64_t)" << std::endl;
 }
 
 void Foo::staticFunction(int level) {

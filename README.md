@@ -58,7 +58,7 @@ The project layout is as follow:
 * [pure_lib](pure_lib) Pure python library to check Bazel Python support.
 * [bp11](bp11) Python package name.
   * [foo](bp11/foo) Simple C++ library.
-    * [python](bp11/foo/python) Python wrapper using pybind11.
+    * [python](bp11/foo/python) Python wrapper using Pybind11.
 
 note: Due to a limitation of `bazel` and `protoc` directory layout must follow
 the python module hierarchy (ed in CMake we create our python layout in the
