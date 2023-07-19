@@ -33,7 +33,7 @@ RUN ./build-manylinux.sh test
 FROM env AS install_env
 COPY --from=build /home/project/build*/python/dist/*.whl ./
 RUN python3 -m pip install --find-links=. \
- bazelpybind11*.whl
+ bp11*.whl
 
 FROM install_env AS install_devel
 WORKDIR /home/sample

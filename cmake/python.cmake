@@ -88,7 +88,8 @@ function(search_python_internal_module)
   endif()
 endfunction()
 
-set(PYTHON_PROJECT bazelpybind11)
+# Python package name
+set(PYTHON_PROJECT ${PROJECT_NAMESPACE})
 message(STATUS "Python project: ${PYTHON_PROJECT}")
 set(PYTHON_PROJECT_DIR ${PROJECT_BINARY_DIR}/python/${PYTHON_PROJECT})
 message(STATUS "Python project build path: ${PYTHON_PROJECT_DIR}")

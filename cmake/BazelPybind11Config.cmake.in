@@ -1,4 +1,4 @@
-# PythonNative CMake configuration file
+# BazelPybind11 CMake configuration file
 
 #include(CMakeFindDependencyMacro)
 #find_dependency(... REQUIRED NO_MODULE)

@@ -3,6 +3,7 @@ digraph DockerDeps {
   //rankdir=BT;
   rankdir=TD;
   node [shape=cylinder, style="rounded,filled", color=black, fillcolor=royalblue];
+
   DISTRO_IMG [label="<distro>:latest"];
   PKG [label="Build packages\ne.g. cmake, g++", shape=box3d];
   PYPKG [label="Python packages\ne.g. python-dev", shape=box3d, fillcolor=gold];
@@ -63,3 +64,4 @@ digraph DockerDeps {
   }
 }
 @enddot
+# vim tw:0

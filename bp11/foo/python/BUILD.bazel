@@ -6,7 +6,7 @@ pybind_extension(
     name = "pyfoo",
     srcs = ["foo.cpp"],
     deps = [
-        "//foo:foo",
+        "//bp11/foo:foo",
     ],
 )
 

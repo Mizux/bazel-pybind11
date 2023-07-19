@@ -5,7 +5,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 option(CMAKE_EXPORT_COMPILE_COMMANDS "Export compile command" TRUE)
 
 project(BazelPybind11 VERSION 1.0 LANGUAGES CXX)
-set(PROJECT_NAMESPACE bpb11)
+set(PROJECT_NAMESPACE bp11)
 message(STATUS "${PROJECT_NAME} version: ${PROJECT_VERSION}")
 #message(STATUS "major: ${PROJECT_VERSION_MAJOR}")
 #message(STATUS "minor: ${PROJECT_VERSION_MINOR}")
@@ -86,7 +86,7 @@ add_subdirectory(cmake/dependencies dependencies)
 
 include(deps)
 include(cpp)
-add_subdirectory(foo)
+add_subdirectory(bp11/foo)
 
 include(python)
-add_subdirectory(foo/python)
+add_subdirectory(bp11/foo/python)

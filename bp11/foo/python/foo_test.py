@@ -4,15 +4,9 @@
 import sys
 import unittest
 
-
-try:
-    import foo.python as fp
-    import foo.python.pyfoo as fpf
-    from foo.python.pyfoo import Foo
-except ImportError:
-    import bazelpybind11.foo.python as fp
-    import bazelpybind11.foo.python.pyfoo as fpf
-    from bazelpybind11.foo.python.pyfoo import Foo
+import bp11.foo.python as fp
+import bp11.foo.python.pyfoo as fpf
+from bp11.foo.python.pyfoo import Foo
 
 if __debug__:
     print(f'python path: {sys.path}')

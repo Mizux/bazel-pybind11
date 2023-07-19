@@ -54,9 +54,17 @@ You'll need:
 The project layout is as follow:
 
 * [WORKSPACE](WORKSPACE) Top-level for [Bazel](https://bazel.build) based build.
-* [pure_lib](pure_lib) Pure python library to check Python support.
-* [foo](foo) Simple C++ library.
-  * [python](foo/python) Python wrapper using pybind11.
+* [CMakeLists.txt](CMakeLists.txt) Top-level for [CMake](https://cmake.org) based build.
+* [pure_lib](pure_lib) Pure python library to check Bazel Python support.
+* [bp11](bp11) Python package name.
+  * [foo](bp11/foo) Simple C++ library.
+    * [python](bp11/foo/python) Python wrapper using pybind11.
+
+note: Due to a limitation of `bazel` and `protoc` directory layout must follow
+the python module hierarchy (ed in CMake we create our python layout in the
+`${PROJECT_BINARY_DIR}/python` so we don't have any constraint on the source
+layout).
+ref: https://github.com/protocolbuffers/protobuf/issues/7061
 
 ## Build
 

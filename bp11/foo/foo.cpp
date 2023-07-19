@@ -1,10 +1,10 @@
-#include "foo/foo.hpp"
+#include "bp11/foo/foo.hpp"
 
 #include <iostream>
 #include <string>
 #include <utility>
 
-namespace foo {
+namespace bp11::foo {
 std::vector<std::string> stringVectorOutput(int level) {
   std::cout << "[" << level << "] Enter " << __func__ << "()" << std::endl;
   std::vector<std::string> result(level, std::to_string(level));
@@ -188,4 +188,4 @@ std::string Foo::operator()() const {
          ",\"int64\":" + std::to_string(_int64Value) + "}";
 }
 
-} // namespace foo
+} // namespace bp11.foo

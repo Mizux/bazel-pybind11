@@ -2,14 +2,14 @@
 '''Test Package'''
 
 import sys
-import bazelpybind11
+import bp11
 
-import bazelpybind11.foo.python.pyfoo as pf
-from bazelpybind11.foo.python.pyfoo import Foo
+import bp11.foo.python.pyfoo as pf
+from bp11.foo.python.pyfoo import Foo
 
 print(f'python path: {sys.path}')
 
-print(f'version: {bazelpybind11.__version__}')
+print(f'version: {bp11.__version__}')
 
 # foo
 print(f'pf.Foo: {dir(pf.Foo)}')
