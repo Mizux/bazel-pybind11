@@ -10,12 +10,19 @@ jobs:
       matrix:
         # VS-2022 broken see https://github.com/bazelbuild/bazel/issues/18592
         runner: [windows-2022, windows-2019]
-        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
+        python-version: [
+          '3.7',
+          '3.8',
+          '3.9',
+          '3.10',
+          '3.11'
+        ]
         option: [
-          '',
-          '--repo_env=BAZEL_CXXOPTS="/std:c++17"',
-          '--action_env=BAZEL_CXXOPTS="/std:c++17"',
-          '--cxxopt="/std:c++17"']
+          #'',
+          #'--repo_env=BAZEL_CXXOPTS="/std:c++17"',
+          #'--action_env=BAZEL_CXXOPTS="/std:c++17"',
+          '--cxxopt="/std:c++17"'
+        ]
       fail-fast: false # Don't cancel all jobs if one fails.
     runs-on: ${{ matrix.runner }}
     #runs-on: windows-latest
