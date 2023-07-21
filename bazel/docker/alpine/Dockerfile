@@ -18,7 +18,7 @@ ENV JAVA_HOME=/usr/lib/jvm/default-jvm
 ENV PATH=$JAVA_HOME/bin:$PATH
 
 # Install Python
-RUN apk add --no-cache python3-dev py3-pip
+RUN apk add --no-cache python3-dev py3-pip py3-wheel
 
 FROM env AS devel
 WORKDIR /home/project
