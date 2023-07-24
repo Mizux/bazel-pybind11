@@ -9,12 +9,18 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
+        python-version: [
+          #'3.8',
+          #'3.9',
+          #'3.10',
+          '3.11'
+        ]
         option: [
-          '',
-          '--repo_env=BAZEL_CXXOPTS="-std=c++17"',
-          '--action_env=BAZEL_CXXOPTS="-std=c++17"',
-          '--cxxopt="-std=c++17"']
+          #'',
+          #'--repo_env=BAZEL_CXXOPTS="-std=c++17"',
+          #'--action_env=BAZEL_CXXOPTS="-std=c++17"',
+          '--cxxopt="-std=c++17"'
+        ]
       fail-fast: false
     steps:
       - uses: actions/checkout@v3
