@@ -6,7 +6,9 @@ ENV PATH=/usr/local/bin:$PATH
 RUN apk add --no-cache git build-base linux-headers cmake
 
 # Install Python
-RUN apk add --no-cache python3-dev py3-pip
+RUN apk add --no-cache \
+ python3-dev py3-pip py3-wheel \
+ py3-virtualenv
 
 # Add the library src to our build env
 FROM env AS devel
@@ -27,6 +29,7 @@ FROM env AS install_env
 COPY --from=build /home/project/build/python/dist/*.whl ./
 RUN python3 -m pip install \
  --find-links=. \
+ --break-system-packages \
  bp11*.whl
 
 FROM install_env AS install_devel
