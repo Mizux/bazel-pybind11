@@ -10,7 +10,7 @@ ENV CC=gcc CXX=g++
 
 # Install Python
 RUN zypper update -y \
-&& zypper install -y python3 python3-pip python3-devel \
+&& zypper install -y python3 python3-pip python3-devel python3-wheel python3-virtualenv \
 && zypper clean -a
 
 # Add the library src to our build env
@@ -31,6 +31,7 @@ RUN cmake --build build --target test -v
 FROM env AS install_env
 COPY --from=build /home/project/build/python/dist/*.whl ./
 RUN python3 -m pip install \
+ --break-system-packages \
  --find-links=. \
  bp11*.whl
 
