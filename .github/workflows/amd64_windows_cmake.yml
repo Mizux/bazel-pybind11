@@ -3,47 +3,44 @@ name: amd64 Windows CMake
 
 on: [push, pull_request, workflow_dispatch]
 
+# Building using the github runner environement directly.
 jobs:
-  # Building using the github runner environement directly.
-  visual-studio:
-    # ref: https://github.com/actions/runner-images
+  native:
     strategy:
       matrix:
-        runner: [windows-2022, windows-2019]
-      fail-fast: false # Don't cancel all jobs if one fails.
-    runs-on: ${{ matrix.runner }}
-    #runs-on: windows-latest
+        cmake: [
+          {generator: "Visual Studio 17 2022", config: Release, build_target: ALL_BUILD, test_target: RUN_TESTS, install_target: INSTALL},
+        ]
+      fail-fast: false
+    name: Windows • CMake • ${{ matrix.cmake.generator }}
+    runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Check cmake
         run: |
           cmake --version
           cmake -G || true
       - name: Configure
         run: >
-          cmake
-          -S.
-          -Bbuild
-          -DCMAKE_CONFIGURATION_TYPES=Release
+          cmake -S. -Bbuild
+          -G "${{ matrix.cmake.generator }}"
+          -DCMAKE_CONFIGURATION_TYPES=${{ matrix.cmake.config }}
           -DCMAKE_INSTALL_PREFIX=install
       - name: Build
         run: >
-          cmake
-          --build build
-          --config Release
-          --target ALL_BUILD
-          -v
+          cmake --build build
+          --config ${{ matrix.cmake.config }}
+          --target ${{ matrix.cmake.build_target }}
+          -v -j2
       - name: Test
         run: >
-          cmake
-          --build build
-          --config Release
-          --target RUN_TESTS
+          cmake --build build
+          --config ${{ matrix.cmake.config }}
+          --target ${{ matrix.cmake.test_target }}
           -v
       - name: Install
         run: >
-          cmake
-          --build build
-          --config Release
-          --target INSTALL
+          cmake --build build
+          --config ${{ matrix.cmake.config }}
+          --target ${{ matrix.cmake.install_target }}
           -v

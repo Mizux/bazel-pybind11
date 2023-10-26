@@ -4,37 +4,34 @@ name: amd64 Docker CMake
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-  Distros:
-    runs-on: ubuntu-latest
+  cmake:
     strategy:
       matrix:
-        #platform: [amd64, arm64, riscv64]
-        platform: [amd64]
+        platform: [amd64] # arm64 riscv64
         distro: [alpine, archlinux, centos, debian, fedora, opensuse, ubuntu]
       fail-fast: false
-    env:
-      PLATFORM: ${{ matrix.platform }}
-      DISTRO: ${{ matrix.distro }}
+    name: ${{ matrix.platform }} • ${{ matrix.distro }} • CMake
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Check docker
         run: |
           docker info
           docker buildx ls
       - name: Build env image
-        run: make --directory=cmake ${PLATFORM}_${DISTRO}_env
-      - name: Build devel project
-        run: make --directory=cmake ${PLATFORM}_${DISTRO}_devel
+        run: make --directory=cmake ${{ matrix.platform }}_${{ matrix.distro }}_env
+      - name: Build devel image
+        run: make --directory=cmake ${{ matrix.platform }}_${{ matrix.distro }}_devel
       - name: Build project
-        run: make --directory=cmake ${PLATFORM}_${DISTRO}_build
+        run: make --directory=cmake ${{ matrix.platform }}_${{ matrix.distro }}_build
       - name: Test project
-        run: make --directory=cmake ${PLATFORM}_${DISTRO}_test
+        run: make --directory=cmake ${{ matrix.platform }}_${{ matrix.distro }}_test
 
       - name: Build install env image
-        run: make --directory=cmake ${PLATFORM}_${DISTRO}_install_env
+        run: make --directory=cmake ${{ matrix.platform }}_${{ matrix.distro }}_install_env
       - name: Build install devel project
-        run: make --directory=cmake ${PLATFORM}_${DISTRO}_install_devel
+        run: make --directory=cmake ${{ matrix.platform }}_${{ matrix.distro }}_install_devel
       - name: Build install project
-        run: make --directory=cmake ${PLATFORM}_${DISTRO}_install_build
+        run: make --directory=cmake ${{ matrix.platform }}_${{ matrix.distro }}_install_build
       - name: Test install project
-        run: make --directory=cmake ${PLATFORM}_${DISTRO}_install_test
+        run: make --directory=cmake ${{ matrix.platform }}_${{ matrix.distro }}_install_test

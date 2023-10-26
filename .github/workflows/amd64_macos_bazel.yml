@@ -1,33 +1,34 @@
 # ref: https://github.com/actions/runner-images
-name: amd64 macOS Bazel
+name: amd64 MacOS Bazel
 
 on: [push, pull_request, workflow_dispatch]
 
+# Building using the github runner environement directly.
 jobs:
-  macos:
-    runs-on: macos-latest
+  native:
     strategy:
       matrix:
-        python-version: [
-          #'3.8',
-          #'3.9',
-          #'3.10',
-          '3.11'
-        ]
-        option: [
-          #'',
-          #'--repo_env=BAZEL_CXXOPTS="-std=c++17"',
-          #'--action_env=BAZEL_CXXOPTS="-std=c++17"',
-          '--cxxopt="-std=c++17"'
+        python: [
+          {version: '3.9'},
+          {version: '3.10'},
+          {version: '3.11'},
+          {version: '3.12'},
         ]
       fail-fast: false
+    name: MacOS • Bazel • Python-${{ matrix.python.version }}
+    runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Setup Python
-        uses: actions/setup-python@v3
+      - uses: actions/checkout@v4
+      - name: Set Java to OpenJDK 17 (Temurin)
+        uses: actions/setup-java@v3
         with:
-          python-version: ${{ matrix.python-version }}
-      - name: Display Python version
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python.version }}
+      - name: Check Python
         run: python --version
       - name: Install Bazel
         run: |
@@ -40,13 +41,11 @@ jobs:
         run: >
           bazel build
           -c opt
-          ${{ matrix.option }}
-          --subcommands=true
+          --subcommands=pretty_print
           ...
       - name: Test
         run: >
           bazel test
           -c opt
-          ${{ matrix.option }}
           --test_output=all
           ...
