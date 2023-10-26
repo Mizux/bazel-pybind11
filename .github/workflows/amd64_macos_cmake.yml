@@ -8,6 +8,12 @@ jobs:
   native:
     strategy:
       matrix:
+        python: [
+          {version: '3.9'},
+          {version: '3.10'},
+          {version: '3.11'},
+          {version: '3.12'},
+        ]
         cmake: [
           {generator: "Xcode", config: Release, build_target: ALL_BUILD, test_target: RUN_TESTS, install_target: install},
           {generator: "Unix Makefiles", config: Release, build_target: all, test_target: test, install_target: install},
@@ -17,6 +23,12 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python.version }}
+      - name: Check Python
+        run: python --version
       - name: Check cmake
         run: cmake --version
       - name: Configure
