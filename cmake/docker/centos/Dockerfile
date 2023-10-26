@@ -12,7 +12,7 @@ CMD [ "/usr/bin/bash" ]
 
 # Install Python
 RUN dnf -y update \
-&& dnf -y install python3.11-devel python3.11-pip \
+&& dnf -y install python3.11-devel python3.11-pip python3.11-wheel \
 && dnf clean all \
 && rm -rf /var/cache/dnf
 

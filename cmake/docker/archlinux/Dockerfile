@@ -7,7 +7,8 @@ RUN pacman -Syu --noconfirm git base-devel cmake
 
 # Install Python
 RUN pacman -Syu --noconfirm \
- python python-pip python-setuptools python-virtualenv
+ python python-pip python-wheel python-setuptools \
+ python-virtualenv
 
 # Add the library src to our build env
 FROM env AS devel

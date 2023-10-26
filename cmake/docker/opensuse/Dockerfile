@@ -10,7 +10,9 @@ ENV CC=gcc CXX=g++
 
 # Install Python
 RUN zypper update -y \
-&& zypper install -y python3 python3-pip python3-devel python3-wheel python3-virtualenv \
+&& zypper install -y \
+ python3 python3-devel python3-pip python3-wheel \
+ python3-virtualenv \
 && zypper clean -a
 
 # Add the library src to our build env
