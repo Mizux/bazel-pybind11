@@ -19,7 +19,7 @@ jobs:
           {generator: "Ninja", config: "Release"},
           {generator: "Ninja Multi-Config", config: "Release"},
         ]
-       fail-fast: false
+      fail-fast: false
     name: Linux • CMake • ${{ matrix.cmake.generator }} • Python-${{ matrix.python.version }}
     runs-on: ubuntu-latest
     steps:
