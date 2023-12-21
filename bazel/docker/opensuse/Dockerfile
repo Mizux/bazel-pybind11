@@ -5,16 +5,15 @@ FROM opensuse/tumbleweed AS env
 # Install system build dependencies
 ENV PATH=/usr/local/bin:$PATH
 RUN zypper update -y \
-&& zypper install -y git gcc gcc-c++ zlib-devel \
+&& zypper install -y git wget gcc gcc-c++ zlib-devel \
 && zypper clean -a
 ENV CC=gcc CXX=g++
 
-# Install Bazel 6
-RUN zypper addrepo -Gf \
-https://download.opensuse.org/repositories/home:ftake:branches:M17N/openSUSE_Tumbleweed/home:ftake:branches:M17N.repo \
-&& zypper refresh \
-&& zypper install -y bazel6 \
-&& zypper clean -a
+# Install Bazelisk
+RUN wget \
+https://github.com/bazelbuild/bazelisk/releases/download/v1.19.0/bazelisk-linux-amd64 \
+&& chmod +x bazelisk-linux-amd64 \
+&& mv bazelisk-linux-amd64 /usr/local/bin/bazel
 
 # Install Python
 RUN zypper update -y \
@@ -26,16 +25,14 @@ WORKDIR /home/project
 COPY . .
 
 FROM devel AS build
-RUN bazel6 version
-RUN bazel6 build \
+RUN bazel version
+RUN bazel build \
  -c opt \
- --action_env=BAZEL_CXXOPTS="-std=c++17" \
  --subcommands=true \
  ...
 
 FROM build AS test
-RUN bazel6 test \
+RUN bazel test \
  -c opt \
- --action_env=BAZEL_CXXOPTS="-std=c++17" \
- --test_output=errors \
+ --test_output=all \
  ...

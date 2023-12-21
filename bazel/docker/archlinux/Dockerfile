@@ -17,13 +17,11 @@ FROM devel AS build
 RUN bazel version
 RUN bazel build \
  -c opt \
- --cxxopt="-std=c++17" \
  --subcommands=true \
  ...
 
 FROM build AS test
 RUN bazel test \
  -c opt \
- --cxxopt="-std=c++17" \
- --test_output=errors \
+ --test_output=all \
  ...
