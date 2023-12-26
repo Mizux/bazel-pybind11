@@ -29,7 +29,7 @@ jobs:
           python-version: ${{ matrix.python.version }}
       - name: Check Python
         run: python --version
-      - name: Check cmake
+      - name: Check CMake
         run: cmake --version
       - name: Configure
         run: >
