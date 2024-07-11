@@ -19,6 +19,7 @@ ENV PATH=$JAVA_HOME/bin:$PATH
 
 # Install Python
 RUN apk add --no-cache python3-dev py3-pip py3-wheel
+RUN python3 -m pip install --break-system-package absl-py
 
 FROM env AS devel
 WORKDIR /home/project
@@ -27,12 +28,14 @@ COPY . .
 FROM devel AS build
 RUN bazel version
 RUN bazel build \
+ --host_javabase=@local_jdk//:jdk \
  -c opt \
  --subcommands=true \
  ...
 
 FROM build AS test
 RUN bazel test \
+ --host_javabase=@local_jdk//:jdk \
  -c opt \
- --test_output=all \
+ --test_output=errors \
  ...

@@ -13,6 +13,7 @@ RUN zypper update -y \
 && zypper install -y \
  python3 python3-devel python3-pip python3-wheel \
  python3-virtualenv python3-setuptools \
+ python3-numpy python3-pandas \
 && zypper clean -a
 
 # Add the library src to our build env
@@ -21,7 +22,7 @@ WORKDIR /home/project
 COPY . .
 
 FROM devel AS build
-RUN cmake -version
+RUN cmake --version
 RUN cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release
 RUN cmake --build build --target all -v
 RUN cmake --build build --target install -v

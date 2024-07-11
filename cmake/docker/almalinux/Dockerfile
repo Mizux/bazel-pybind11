@@ -1,6 +1,6 @@
 # Create a virtual environment with all tools installed
-# ref: https://quay.io/repository/centos/centos
-FROM quay.io/centos/centos:stream AS env
+# ref: https://hub.docker.com/_/almalinux
+FROM almalinux:latest AS env
 # Install system build dependencies
 ENV PATH=/usr/local/bin:$PATH
 RUN dnf -y update \
@@ -12,7 +12,7 @@ CMD [ "/usr/bin/bash" ]
 
 # Install Python
 RUN dnf -y update \
-&& dnf -y install python3.11-devel python3.11-pip python3.11-wheel \
+&& dnf -y install python3-devel python3-pip \
 && dnf clean all \
 && rm -rf /var/cache/dnf
 
@@ -22,7 +22,7 @@ WORKDIR /home/project
 COPY . .
 
 FROM devel AS build
-RUN cmake -version
+RUN cmake --version
 RUN cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release
 RUN cmake --build build --target all -v
 RUN cmake --build build --target install -v
