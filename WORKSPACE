@@ -5,7 +5,7 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository", "new_git_r
 ## Bazel Skylib rules.
 git_repository(
     name = "bazel_skylib",
-    tag = "1.5.0",
+    tag = "1.7.1",
     remote = "https://github.com/bazelbuild/bazel-skylib.git",
 )
 load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
@@ -14,7 +14,7 @@ bazel_skylib_workspace()
 ## Bazel rules.
 git_repository(
     name = "platforms",
-    tag = "0.0.9",
+    tag = "0.0.10",
     remote = "https://github.com/bazelbuild/platforms.git",
 )
 
@@ -54,7 +54,6 @@ python_register_multi_toolchains(
 git_repository(
     name = "pybind11_bazel",
     tag = "v2.12.0", # 2024/04/08
-    #commit = "23926b00e2b2eb2fc46b17e587cf0c0cfd2f2c4b", # 2023/11/29
     patches = ["//patches:pybind11_bazel.patch"],
     patch_args = ["-p1"],
     remote = "https://github.com/pybind/pybind11_bazel.git",
@@ -63,7 +62,6 @@ git_repository(
 new_git_repository(
     name = "pybind11",
     build_file = "@pybind11_bazel//:pybind11-BUILD.bazel",
-    #build_file = "@pybind11_bazel//:pybind11.BUILD",
     tag = "v2.13.1",
     remote = "https://github.com/pybind/pybind11.git",
 )
