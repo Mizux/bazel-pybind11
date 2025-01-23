@@ -20,7 +20,7 @@ git_repository(
 
 git_repository(
     name = "rules_cc",
-    tag = "0.0.9",
+    tag = "0.0.16",
     remote = "https://github.com/bazelbuild/rules_cc.git",
 )
 
@@ -53,7 +53,7 @@ python_register_multi_toolchains(
 ## `pybind11_bazel`
 git_repository(
     name = "pybind11_bazel",
-    tag = "v2.12.0", # 2024/04/08
+    tag = "v2.13.6", # 2024/04/08
     patches = ["//patches:pybind11_bazel.patch"],
     patch_args = ["-p1"],
     remote = "https://github.com/pybind/pybind11_bazel.git",
@@ -62,13 +62,13 @@ git_repository(
 new_git_repository(
     name = "pybind11",
     build_file = "@pybind11_bazel//:pybind11-BUILD.bazel",
-    tag = "v2.13.1",
+    tag = "v2.13.6",
     remote = "https://github.com/pybind/pybind11.git",
 )
 
 ## Testing
 git_repository(
-    name = "com_google_googletest",
+    name = "googletest",
     tag = "v1.14.0",
     remote = "https://github.com/google/googletest.git",
 )
