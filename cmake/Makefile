@@ -120,7 +120,8 @@ DISTROS := \
  fedora \
  opensuse \
  rockylinux \
- ubuntu
+ ubuntu \
+ manylinux
 
 # $* stem
 # $< first prerequist

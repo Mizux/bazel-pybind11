@@ -6,9 +6,11 @@
 .github
 .clang-format
 
-ci/*
 bazel/docker
-cmake/docker
+bazel/docs
+
+cmake/docker/**/Dockerfile
+cmake/docs
 **/Makefile
 
 AUTHORS
