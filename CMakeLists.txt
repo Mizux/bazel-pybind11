@@ -15,6 +15,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Set max os target version.
+set(CMAKE_OSX_DEPLOYMENT_TARGET 10.15)
+
 # Default Build Type to be Release
 get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
 if(isMultiConfig)
@@ -71,8 +74,12 @@ endif()
 set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
 include(CTest)
 
-# Build deps
-option(BUILD_googletest "Build the googletest dependency Library" ON)
+if(BUILD_TESTING)
+  option(BUILD_googletest "Build the googletest dependency Library" ON)
+  message(STATUS "Build googletest: ${BUILD_googletest}")
+else()
+  set(BUILD_googletest OFF)
+endif()
 
 option(BUILD_pybind11 "Build pybind11 library" ON)
 message(STATUS "Build pybind11: ${BUILD_pybind11}")

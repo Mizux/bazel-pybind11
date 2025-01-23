@@ -41,7 +41,7 @@ function(search_python_module)
       OUTPUT_VARIABLE MODULE_VERSION
       ERROR_QUIET
       OUTPUT_STRIP_TRAILING_WHITESPACE
-      )
+    )
   endif()
   if(${_RESULT} STREQUAL "0")
     message(STATUS "Found python module: \"${MODULE_NAME}\" (found version \"${MODULE_VERSION}\")")
@@ -51,7 +51,8 @@ function(search_python_module)
       execute_process(
         COMMAND ${Python3_EXECUTABLE} -m pip install --user ${MODULE_PACKAGE}
         OUTPUT_STRIP_TRAILING_WHITESPACE
-        )
+        COMMAND_ERROR_IS_FATAL ANY
+      )
     else()
       message(FATAL_ERROR "Can't find python module: \"${MODULE_NAME}\", please install it using your system package manager.")
     endif()
@@ -88,7 +89,9 @@ function(search_python_internal_module)
   endif()
 endfunction()
 
-# Python package name
+#######################
+##  PYTHON WRAPPERS  ##
+#######################
 set(PYTHON_PROJECT ${PROJECT_NAMESPACE})
 message(STATUS "Python project: ${PYTHON_PROJECT}")
 set(PYTHON_PROJECT_DIR ${PROJECT_BINARY_DIR}/python/${PYTHON_PROJECT})
@@ -118,7 +121,7 @@ file(GENERATE
 #  COMMAND ${CMAKE_COMMAND} -E copy setup.py setup.py
 #  WORKING_DIRECTORY python)
 
-# Look for python module wheel
+# Look for required python modules
 search_python_module(
   NAME setuptools
   PACKAGE setuptools)
@@ -127,7 +130,7 @@ search_python_module(
   PACKAGE wheel)
 
 add_custom_command(
-  OUTPUT python/dist/timestamp
+  OUTPUT python/dist_timestamp
   COMMAND ${CMAKE_COMMAND} -E remove_directory dist
   COMMAND ${CMAKE_COMMAND} -E make_directory ${PYTHON_PROJECT}/.libs
   # Don't need to copy static lib on Windows.
@@ -139,7 +142,7 @@ add_custom_command(
     ${PYTHON_PROJECT}/foo/python
   #COMMAND ${Python3_EXECUTABLE} setup.py bdist_egg bdist_wheel
   COMMAND ${Python3_EXECUTABLE} setup.py bdist_wheel
-  COMMAND ${CMAKE_COMMAND} -E touch ${PROJECT_BINARY_DIR}/python/dist/timestamp
+  COMMAND ${CMAKE_COMMAND} -E touch ${PROJECT_BINARY_DIR}/python/dist_timestamp
   MAIN_DEPENDENCY
     python/setup.py.in
   DEPENDS
@@ -157,7 +160,7 @@ add_custom_command(
 # Main Target
 add_custom_target(python_package ALL
   DEPENDS
-    python/dist/timestamp
+    python/dist_timestamp
   WORKING_DIRECTORY python)
 
 ###################
