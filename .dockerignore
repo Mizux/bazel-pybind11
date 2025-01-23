@@ -22,6 +22,7 @@ LICENSE
 
 # Native build
 bazel-*/
+*.lock
 build*/
 
 # Editor directories and files
