@@ -1,5 +1,5 @@
 module(
-    name = "pybind11_abseil",
+    name = "mizux_bp11",
     version = "head",
 )
 
