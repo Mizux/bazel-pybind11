@@ -37,16 +37,3 @@ python = use_extension("@rules_python//python/extensions:python.bzl", "python", 
 ]
 
 use_repo(python, python = "python_versions")
-
-pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip", dev_dependency = True)
-
-[
-    pip.parse(
-        hub_name = "pypi",
-        python_version = version,
-        requirements_lock = "//pybind11_abseil/requirements:requirements_lock_" + version.replace(".", "_") + ".txt",
-    )
-    for version in SUPPORTED_PYTHON_VERSIONS
-]
-
-use_repo(pip, "pypi")
