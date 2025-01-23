@@ -11,13 +11,13 @@ ENV CC=gcc CXX=g++
 
 # Install Bazelisk
 RUN wget \
-https://github.com/bazelbuild/bazelisk/releases/download/v1.20.0/bazelisk-linux-amd64 \
+https://github.com/bazelbuild/bazelisk/releases/download/v1.23.0/bazelisk-linux-amd64 \
 && chmod +x bazelisk-linux-amd64 \
 && mv bazelisk-linux-amd64 /usr/local/bin/bazel
 
 # Install Python
 RUN zypper update -y \
-&& zypper install -y python3 python3-pip python3-devel \
+&& zypper install -y python3 python3-devel python3-pip \
 && zypper clean -a
 
 FROM env AS devel
@@ -28,11 +28,13 @@ FROM devel AS build
 RUN bazel version
 RUN bazel build \
  -c opt \
- --subcommands=true \
+ --subcommands=pretty_print \
+ --enable_bzlmod \
  ...
 
 FROM build AS test
 RUN bazel test \
  -c opt \
  --test_output=errors \
+ --enable_bzlmod \
  ...

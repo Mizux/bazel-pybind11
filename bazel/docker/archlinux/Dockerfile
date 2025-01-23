@@ -17,11 +17,13 @@ FROM devel AS build
 RUN bazel version
 RUN bazel build \
  -c opt \
- --subcommands=true \
+ --subcommands=pretty_print \
+ --enable_bzlmod \
  ...
 
 FROM build AS test
 RUN bazel test \
  -c opt \
  --test_output=errors \
+ --enable_bzlmod \
  ...

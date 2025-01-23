@@ -7,11 +7,18 @@ ENV TZ=Europe/Paris
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Install system build dependencies
-RUN apt-get update -qq \
-&& apt-get install -yq git wget curl libssl-dev build-essential \
-&& apt-get install -yq python3-dev python3-pip python3-venv \
-&& apt-get install -yq default-jdk \
-&& apt-get clean \
+RUN apt update -q \
+&& apt install -yq \
+ git wget curl libssl-dev build-essential \
+ default-jdk \
+&& apt clean \
+&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Install Python
+RUN apt update -q \
+&& apt install -yq \
+ python3-dev python3-pip python3-venv \
+&& apt clean \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install Bazel
@@ -31,11 +38,13 @@ FROM devel AS build
 RUN bazel version
 RUN bazel build \
  -c opt \
- --subcommands=true \
+ --subcommands=pretty_print \
+ --enable_bzlmod \
  ...
 
 FROM build AS test
 RUN bazel test \
  -c opt \
  --test_output=errors \
+ --enable_bzlmod \
  ...
