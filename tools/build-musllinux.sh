@@ -85,8 +85,8 @@ function build_wheel() {
   fi
   cmake -S. -B"${BUILD_DIR}" \
     -DCMAKE_BUILD_TYPE=Release \
-    -DBUILD_DEPS=ON -DBUILD_PYTHON=ON -DPython3_ROOT_DIR="$1" \
-    -DBUILD_TESTING=OFF -DBUILD_SAMPLES=OFF -DBUILD_EXAMPLES=OFF #--debug-find
+    -DPython3_ROOT_DIR="$1" \
+    -DBUILD_TESTING=OFF
   cmake --build "${BUILD_DIR}" -v -j4
 
   # Restore environment
