@@ -3,6 +3,10 @@ name: amd64 MacOS Bazel
 
 on: [push, pull_request, workflow_dispatch]
 
+concurrency:
+  group: ${{github.workflow}}-${{github.ref}}
+  cancel-in-progress: true
+
 # Building using the github runner environement directly.
 jobs:
   native:
@@ -30,7 +34,7 @@ jobs:
           - cpp: {version: 20}
             bazel: {compilation_mode: dbg}
       fail-fast: false
-    name: MacOS•Bazel(${{ matrix.bazel.compilation_mode }},C++${{ matrix.cpp.version }})•Py${{ matrix.python.version }}
+    name: MacOS•Bazel(${{matrix.bazel.compilation_mode}},C++${{ matrix.cpp.version }})•Py${{ matrix.python.version }}
     runs-on: macos-13 # last macos intel based runner
     steps:
       - uses: actions/checkout@v4
@@ -42,7 +46,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python.version }}
+          python-version: ${{matrix.python.version}}
       - name: Check Python
         run: |
           python --version
@@ -51,21 +55,21 @@ jobs:
         run: bazel version
       - name: Change Python in MODULE.bazel
         run: |
-          sed -i '' -e 's/\(DEFAULT_PYTHON =\) "3.[0-9]*"/\1 "${{ matrix.python.version }}"/g' MODULE.bazel
+          sed -i '' -e 's/\(DEFAULT_PYTHON =\) "3.[0-9]*"/\1 "${{matrix.python.version}}"/g' MODULE.bazel
           cat MODULE.bazel
       - name: Build
         run: >
           bazel build
-          -c ${{ matrix.bazel.compilation_mode }}
-          --cxxopt=${{ matrix.cpp.flags }} --host_cxxopt=${{ matrix.cpp.flags }}
+          -c ${{matrix.bazel.compilation_mode}}
+          --cxxopt=${{matrix.cpp.flags}} --host_cxxopt=${{ matrix.cpp.flags }}
           --subcommands=pretty_print
           --enable_bzlmod
           //...
       - name: Test
         run: >
           bazel test
-          -c ${{ matrix.bazel.compilation_mode }}
-          --cxxopt=${{ matrix.cpp.flags }} --host_cxxopt=${{ matrix.cpp.flags }}
+          -c ${{matrix.bazel.compilation_mode}}
+          --cxxopt=${{matrix.cpp.flags}} --host_cxxopt=${{ matrix.cpp.flags }}
           --subcommands=pretty_print
           --enable_bzlmod
           //...

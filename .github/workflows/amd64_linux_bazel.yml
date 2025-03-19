@@ -3,6 +3,10 @@ name: amd64 Linux Bazel
 
 on: [push, pull_request, workflow_dispatch]
 
+concurrency:
+  group: ${{github.workflow}}-${{github.ref}}
+  cancel-in-progress: true
+
 # Building using the github runner environement directly.
 jobs:
   native:
@@ -30,7 +34,7 @@ jobs:
           - cpp: {version: 20}
             bazel: {compilation_mode: dbg}
       fail-fast: false
-    name: Linux•Bazel(${{ matrix.bazel.compilation_mode }},C++${{ matrix.cpp.version }})•Py${{ matrix.python.version }}
+    name: Linux•Bazel(${{matrix.bazel.compilation_mode}},C++${{ matrix.cpp.version }})•Py${{ matrix.python.version }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,7 +43,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python.version }}
+          python-version: ${{matrix.python.version}}
       - name: Check Python
         run: |
           python --version
@@ -47,23 +51,23 @@ jobs:
       - uses: bazel-contrib/setup-bazel@0.8.4
         with:
           bazelisk-cache: true
-          disk-cache: ${{ github.workflow }}
+          disk-cache: ${{github.workflow}}
           repository-cache: true
       - name: Check Bazel
         run: bazel version
       - name: Build
         run: >
           bazel build
-          -c ${{ matrix.bazel.compilation_mode }}
-          --cxxopt=${{ matrix.cpp.flags }} --host_cxxopt=${{ matrix.cpp.flags }}
+          -c ${{matrix.bazel.compilation_mode}}
+          --cxxopt=${{matrix.cpp.flags}} --host_cxxopt=${{ matrix.cpp.flags }}
           --subcommands=pretty_print
           --enable_bzlmod
           //...
       - name: Test
         run: >
           bazel test
-          -c ${{ matrix.bazel.compilation_mode }}
-          --cxxopt=${{ matrix.cpp.flags }} --host_cxxopt=${{ matrix.cpp.flags }}
+          -c ${{matrix.bazel.compilation_mode}}
+          --cxxopt=${{matrix.cpp.flags}} --host_cxxopt=${{ matrix.cpp.flags }}
           --subcommands=pretty_print
           --enable_bzlmod
           //...
