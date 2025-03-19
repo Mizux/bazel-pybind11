@@ -42,6 +42,10 @@ include(GNUInstallDirs)
 # e.g.:
 # add_cpp_test(foo.cpp)
 function(add_cpp_test FILE_NAME)
+  if(NOT BUILD_TESTING)
+    return()
+  endif()
+
   message(STATUS "Configuring test ${FILE_NAME}: ...")
   get_filename_component(TEST_NAME ${FILE_NAME} NAME_WE)
   get_filename_component(COMPONENT_DIR ${FILE_NAME} DIRECTORY)

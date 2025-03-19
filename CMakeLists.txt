@@ -70,22 +70,22 @@ if(BUILD_SHARED_LIBS AND MSVC)
   set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 endif()
 
+option(BUILD_pybind11 "Build pybind11 library" ON)
+message(STATUS "Build pybind11: ${BUILD_pybind11}")
+
+option(FETCH_PYTHON_DEPS "Install python required modules if not available" ON)
+message(STATUS "Python fetch dependencies: ${FETCH_PYTHON_DEPS}")
+
 # Disable CTest targets
 set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
 include(CTest)
 
 if(BUILD_TESTING)
   option(BUILD_googletest "Build the googletest dependency Library" ON)
-  message(STATUS "Build googletest: ${BUILD_googletest}")
 else()
   set(BUILD_googletest OFF)
 endif()
-
-option(BUILD_pybind11 "Build pybind11 library" ON)
-message(STATUS "Build pybind11: ${BUILD_pybind11}")
-
-option(FETCH_PYTHON_DEPS "Install python required modules if not available" ON)
-message(STATUS "Python fetch dependencies: ${FETCH_PYTHON_DEPS}")
+message(STATUS "Build googletest: ${BUILD_googletest}")
 
 # Build Needed dependencies
 add_subdirectory(cmake/dependencies dependencies)
