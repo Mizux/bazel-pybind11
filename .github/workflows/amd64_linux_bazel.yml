@@ -37,7 +37,7 @@ jobs:
     name: Linux•Bazel(${{matrix.bazel.compilation_mode}},C++${{ matrix.cpp.version }})•Py${{ matrix.python.version }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Check Java
         run: java -version
       - name: Setup Python
@@ -48,7 +48,7 @@ jobs:
         run: |
           python --version
           python -m platform
-      - uses: bazel-contrib/setup-bazel@0.8.4
+      - uses: bazel-contrib/setup-bazel@0.15.0
         with:
           bazelisk-cache: true
           disk-cache: ${{github.workflow}}
@@ -76,4 +76,4 @@ jobs:
     runs-on: ubuntu-latest
     needs: native
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
