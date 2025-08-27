@@ -6,21 +6,20 @@ module(
 # Only direct dependencies need to be listed below.
 # Please keep the versions in sync with the versions in the WORKSPACE file.
 # see https://registry.bazel.build/
-bazel_dep(name = "bazel_skylib", version = "1.7.1")
-bazel_dep(name = "platforms", version = "0.0.10")
-bazel_dep(name = "rules_cc", version = "0.0.16")
-bazel_dep(name = "rules_python", version = "0.40.0")
+bazel_dep(name = "bazel_skylib", version = "1.8.1")
+bazel_dep(name = "platforms", version = "1.0.0")
+bazel_dep(name = "rules_cc", version = "0.1.4")
+bazel_dep(name = "rules_python", version = "1.5.1")
 bazel_dep(name = "pybind11_bazel", version = "2.13.6")
 
 #### DEV ONLY DEPENDENCIES BELOW HERE ####
-bazel_dep(name = "googletest", version = "1.15.2")
+bazel_dep(name = "googletest", version = "1.17.0")
 
 SUPPORTED_PYTHON_VERSIONS = [
     "3.12",
     "3.11",
     "3.10",
     "3.9",
-    "3.8",
 ]
 
 DEFAULT_PYTHON = "3.11"

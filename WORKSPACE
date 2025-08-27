@@ -1,11 +1,18 @@
 workspace(name = "mizux_bp11")
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository", "new_git_repository")
 
-# Bazel Extensions
-## Bazel Skylib rules.
+################################################################################
+#
+# WORKSPACE is being deprecated in favor of the new Bzlmod dependency system.
+# It will be removed at some point in the future.
+#
+################################################################################
+
+## `bazel_skylib`
+# Needed for Abseil.
 git_repository(
     name = "bazel_skylib",
-    tag = "1.7.1",
+    tag = "1.8.1",
     remote = "https://github.com/bazelbuild/bazel-skylib.git",
 )
 load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
@@ -14,19 +21,19 @@ bazel_skylib_workspace()
 ## Bazel rules.
 git_repository(
     name = "platforms",
-    tag = "0.0.10",
+    tag = "1.0.0",
     remote = "https://github.com/bazelbuild/platforms.git",
 )
 
 git_repository(
     name = "rules_cc",
-    tag = "0.0.16",
+    tag = "0.1.4",
     remote = "https://github.com/bazelbuild/rules_cc.git",
 )
 
 git_repository(
     name = "rules_python",
-    tag = "0.34.0",
+    tag = "1.5.1",
     remote = "https://github.com/bazelbuild/rules_python.git",
 )
 
@@ -45,7 +52,6 @@ python_register_multi_toolchains(
       "3.11",
       "3.10",
       "3.9",
-      "3.8"
     ],
     ignore_root_user_error=True,
 )
@@ -59,6 +65,8 @@ git_repository(
     remote = "https://github.com/pybind/pybind11_bazel.git",
 )
 
+## `pybind11`
+# https://github.com/pybind/pybind11
 new_git_repository(
     name = "pybind11",
     build_file = "@pybind11_bazel//:pybind11-BUILD.bazel",
@@ -69,6 +77,6 @@ new_git_repository(
 ## Testing
 git_repository(
     name = "googletest",
-    tag = "v1.14.0",
+    tag = "v1.17.0",
     remote = "https://github.com/google/googletest.git",
 )

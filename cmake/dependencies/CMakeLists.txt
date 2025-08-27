@@ -1,7 +1,7 @@
 include(FetchContent)
 set(FETCHCONTENT_QUIET OFF)
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
-set(BUILD_SHARED_LIBS OFF)
+set(BUILD_SHARED_LIBS ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(BUILD_TESTING OFF)
 set(CMAKE_Fortran_COMPILER OFF)
@@ -22,6 +22,7 @@ if(BUILD_pybind11)
     pybind11
     GIT_REPOSITORY "https://github.com/pybind/pybind11.git"
     GIT_TAG "v2.13.1"
+    GIT_SHALLOW TRUE
     PATCH_COMMAND git apply --ignore-whitespace "${CMAKE_CURRENT_LIST_DIR}/../../patches/pybind11.patch"
   )
   FetchContent_MakeAvailable(pybind11)
@@ -38,11 +39,20 @@ if(BUILD_googletest)
   FetchContent_Declare(
     googletest
     GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG v1.14.0)
+    GIT_TAG v1.17.0
+    GIT_SHALLOW TRUE
+    #PATCH_COMMAND git apply --ignore-whitespace ""
+  )
   set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
   set(INSTALL_GTEST OFF)
-  set(GTEST_HAS_ABSL OFF)
+  set(GTEST_HAS_ABSL ON)
+  if(WIN32)
+    set(BUILD_SHARED_LIBS OFF)
+  endif()
   FetchContent_MakeAvailable(googletest)
+  if(WIN32)
+    set(BUILD_SHARED_LIBS ON)
+  endif()
   list(POP_BACK CMAKE_MESSAGE_INDENT)
   message(CHECK_PASS "fetched")
 endif()

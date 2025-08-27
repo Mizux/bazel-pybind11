@@ -70,33 +70,17 @@ ref: https://github.com/protocolbuffers/protobuf/issues/7061
 
 To build this example you should use:
 
-* on UNIX:
-
-  ```sh
-  bazel build -c opt --action_env=BAZEL_CXXOPTS="-std=c++17" --subcommands=true ...
-  ```
-
-* on Windows when using MSVC:
-
-  ```sh
-  bazel build -c opt --cxxopt="/std:c++17" --subcommands=true ...
-  ```
+```sh
+bazel build -c opt //...
+```
 
 ## Running Tests
 
 To build this example you should use:
 
-* on UNIX:
-
-  ```sh
-  bazel test -c opt --action_env=BAZEL_CXXOPTS="-std=c++17" --test_output=errors --nocache_test_results ...
-  ```
-
-* on Windows when using MSVC:
-
-  ```sh
-  bazel test -c opt --cxxopt="/std:c++17" --test_output=errors --nocache_test_results ...
-  ```
+```sh
+bazel test -c opt --test_output=errors --nocache_test_results //...
+```
 
 ## CI Setup
 
