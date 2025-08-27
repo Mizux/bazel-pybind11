@@ -105,6 +105,10 @@ file(GENERATE OUTPUT ${PYTHON_PROJECT_DIR}/__init__.py CONTENT "__version__ = \"
 file(GENERATE OUTPUT ${PYTHON_PROJECT_DIR}/foo/__init__.py CONTENT "")
 file(GENERATE OUTPUT ${PYTHON_PROJECT_DIR}/foo/python/__init__.py CONTENT "")
 
+# Adds py.typed to make typed packages.
+file(GENERATE OUTPUT ${PYTHON_PROJECT_DIR}/foo/py.typed CONTENT "")
+file(GENERATE OUTPUT ${PYTHON_PROJECT_DIR}/foo/python/py.typed CONTENT "")
+
 # setup.py.in contains cmake variable e.g. @PYTHON_PROJECT@ and
 # generator expression e.g. $<TARGET_FILE_NAME:foo_pybind11>
 configure_file(
@@ -121,6 +125,67 @@ file(GENERATE
 #  COMMAND ${CMAKE_COMMAND} -E copy setup.py setup.py
 #  WORKING_DIRECTORY python)
 
+add_custom_command(
+  OUTPUT python/foo_timestamp
+  COMMAND ${CMAKE_COMMAND} -E remove -f foo_timestamp
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${PYTHON_PROJECT}/.libs
+  # Don't need to copy static lib on Windows.
+  COMMAND ${CMAKE_COMMAND} -E
+   $<IF:$<STREQUAL:$<TARGET_PROPERTY:foo,TYPE>,SHARED_LIBRARY>,copy,true>
+   $<$<STREQUAL:$<TARGET_PROPERTY:foo,TYPE>,SHARED_LIBRARY>:$<TARGET_SONAME_FILE:foo>>
+   ${PYTHON_PROJECT}/.libs
+  COMMAND ${CMAKE_COMMAND} -E touch ${PROJECT_BINARY_DIR}/python/foo_timestamp
+  MAIN_DEPENDENCY
+    python/setup.py.in
+  DEPENDS
+    python/setup.py
+    ${PROJECT_NAMESPACE}::foo
+  WORKING_DIRECTORY python
+  COMMAND_EXPAND_LISTS)
+
+add_custom_command(
+  OUTPUT python/foo_pybind11_timestamp
+  COMMAND ${CMAKE_COMMAND} -E remove -f foo_pybind11_timestamp
+  COMMAND ${CMAKE_COMMAND} -E copy
+    $<TARGET_FILE:foo_pybind11> ${PYTHON_PROJECT}/foo/python
+  COMMAND ${CMAKE_COMMAND} -E touch ${PROJECT_BINARY_DIR}/python/foo_pybind11_timestamp
+  MAIN_DEPENDENCY
+    python/setup.py.in
+  DEPENDS
+    foo_pybind11
+  WORKING_DIRECTORY python
+  COMMAND_EXPAND_LISTS)
+
+
+# Generate Stub
+if(GENERATE_PYTHON_STUB)
+# Look for required python modules
+search_python_module(
+  NAME mypy
+  PACKAGE mypy
+  NO_VERSION)
+
+find_program(
+  stubgen_EXECUTABLE
+  NAMES stubgen stubgen.exe
+  REQUIRED
+)
+message(STATUS "Python: stubgen: ${stubgen_EXECUTABLE}")
+
+add_custom_command(
+  OUTPUT python/stub_timestamp
+  COMMAND ${CMAKE_COMMAND} -E remove -f stub_timestamp
+  COMMAND ${stubgen_EXECUTABLE} -p bp11.foo.python.pyfoo --output .
+  COMMAND ${CMAKE_COMMAND} -E touch ${PROJECT_BINARY_DIR}/python/stub_timestamp
+  MAIN_DEPENDENCY
+    python/setup.py.in
+  DEPENDS
+    python/foo_timestamp
+    python/foo_pybind11_timestamp
+  WORKING_DIRECTORY python
+  COMMAND_EXPAND_LISTS)
+endif()
+
 # Look for required python modules
 search_python_module(
   NAME setuptools
@@ -132,14 +197,6 @@ search_python_module(
 add_custom_command(
   OUTPUT python/dist_timestamp
   COMMAND ${CMAKE_COMMAND} -E remove_directory dist
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${PYTHON_PROJECT}/.libs
-  # Don't need to copy static lib on Windows.
-  COMMAND ${CMAKE_COMMAND} -E $<IF:$<STREQUAL:$<TARGET_PROPERTY:foo,TYPE>,SHARED_LIBRARY>,copy,true>
-    $<$<STREQUAL:$<TARGET_PROPERTY:foo,TYPE>,SHARED_LIBRARY>:$<TARGET_SONAME_FILE:foo>>
-    ${PYTHON_PROJECT}/.libs
-  COMMAND ${CMAKE_COMMAND} -E copy
-    $<TARGET_FILE:foo_pybind11>
-    ${PYTHON_PROJECT}/foo/python
   #COMMAND ${Python3_EXECUTABLE} setup.py bdist_egg bdist_wheel
   COMMAND ${Python3_EXECUTABLE} setup.py bdist_wheel
   COMMAND ${CMAKE_COMMAND} -E touch ${PROJECT_BINARY_DIR}/python/dist_timestamp
@@ -147,8 +204,9 @@ add_custom_command(
     python/setup.py.in
   DEPENDS
     python/setup.py
-    ${PROJECT_NAMESPACE}::foo
-    ${PROJECT_NAMESPACE}::foo_pybind11
+    python/foo_timestamp
+    python/foo_pybind11_timestamp
+    $<$<BOOL:${GENERATE_PYTHON_STUB}>:python/stub_timestamp>
   BYPRODUCTS
     python/${PYTHON_PROJECT}
     python/${PYTHON_PROJECT}.egg-info
@@ -187,7 +245,8 @@ if(BUILD_TESTING)
     #COMMAND ${VENV_EXECUTABLE} ${VENV_DIR}
     # Must NOT call it in a folder containing the setup.py otherwise pip call it
     # (i.e. "python setup.py bdist") while we want to consume the wheel package
-    COMMAND ${VENV_Python3_EXECUTABLE} -m pip install --find-links=${CMAKE_CURRENT_BINARY_DIR}/python/dist ${PYTHON_PROJECT}
+    COMMAND ${VENV_Python3_EXECUTABLE} -m pip install
+      --find-links=${CMAKE_CURRENT_BINARY_DIR}/python/dist ${PYTHON_PROJECT}
     BYPRODUCTS ${VENV_DIR}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Create venv and install ${PYTHON_PROJECT}"
@@ -199,7 +258,7 @@ endif()
 # Parameters:
 #  the python filename
 # e.g.:
-# add_python_test(foo.py)
+# add_python_test(foo_test.py)
 function(add_python_test FILE_NAME)
   message(STATUS "Configuring test ${FILE_NAME} ...")
   get_filename_component(EXAMPLE_NAME ${FILE_NAME} NAME_WE)

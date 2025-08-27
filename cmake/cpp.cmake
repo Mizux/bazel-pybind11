@@ -45,7 +45,6 @@ function(add_cpp_test FILE_NAME)
   if(NOT BUILD_TESTING)
     return()
   endif()
-
   message(STATUS "Configuring test ${FILE_NAME}: ...")
   get_filename_component(TEST_NAME ${FILE_NAME} NAME_WE)
   get_filename_component(COMPONENT_DIR ${FILE_NAME} DIRECTORY)
@@ -65,9 +64,7 @@ function(add_cpp_test FILE_NAME)
     GTest::gtest_main
     ${PROJECT_NAMESPACE}::foo)
 
-  if(BUILD_TESTING)
-    add_test(NAME cpp_${COMPONENT_NAME}_${TEST_NAME} COMMAND ${TEST_NAME})
-  endif()
+  add_test(NAME cpp_${COMPONENT_NAME}_${TEST_NAME} COMMAND ${TEST_NAME})
   message(STATUS "Configuring test ${FILE_NAME}: ...DONE")
 endfunction()
 

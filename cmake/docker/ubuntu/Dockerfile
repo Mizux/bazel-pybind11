@@ -19,6 +19,8 @@ RUN apt update -q \
  python3-venv python3-virtualenv \
 && apt clean \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN python3 -m pip install --break-system-package \
+ numpy pandas
 
 FROM env AS devel
 WORKDIR /home/project
