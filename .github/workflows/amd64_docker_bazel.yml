@@ -31,3 +31,9 @@ jobs:
         run: make --directory=bazel ${{matrix.platform}}_${{matrix.distro}}_build
       - name: Test project
         run: make --directory=bazel ${{matrix.platform}}_${{matrix.distro}}_test
+
+  amd64_docker:
+    runs-on: ubuntu-latest
+    needs: bazel
+    steps:
+      - uses: actions/checkout@v5

@@ -34,7 +34,7 @@ jobs:
           - cpp: {version: 20}
             bazel: {compilation_mode: dbg}
       fail-fast: false
-    name: Linux•Bazel(${{matrix.bazel.compilation_mode}},C++${{ matrix.cpp.version }})•Py${{ matrix.python.version }}
+    name: Linux•Bazel(${{matrix.bazel.compilation_mode}},C++${{matrix.cpp.version}})•Py${{matrix.python.version}}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -69,6 +69,7 @@ jobs:
           -c ${{matrix.bazel.compilation_mode}}
           --cxxopt=${{matrix.cpp.flags}} --host_cxxopt=${{ matrix.cpp.flags }}
           --subcommands=pretty_print
+          --test_output=errors
           --enable_bzlmod
           //...
 

@@ -34,7 +34,7 @@ jobs:
           - cpp: {version: 20}
             bazel: {compilation_mode: dbg}
       fail-fast: false
-    name: MacOS•Bazel(${{matrix.bazel.compilation_mode}},C++${{ matrix.cpp.version }})•Py${{ matrix.python.version }}
+    name: MacOS•Bazel(${{matrix.bazel.compilation_mode}},C++${{matrix.cpp.version}})•Py${{matrix.python.version}}
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v5
