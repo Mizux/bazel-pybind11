@@ -35,7 +35,7 @@ jobs:
             bazel: {compilation_mode: dbg}
       fail-fast: false
     name: MacOS•Bazel(${{matrix.bazel.compilation_mode}},C++${{matrix.cpp.version}})•Py${{matrix.python.version}}
-    runs-on: macos-13 # last macos intel based runner
+    runs-on: macos-15-intel
     steps:
       - uses: actions/checkout@v5
       - name: Set Java to OpenJDK 17 (Temurin)
