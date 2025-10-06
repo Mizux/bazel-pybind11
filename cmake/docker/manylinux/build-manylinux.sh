@@ -63,7 +63,7 @@ function build_wheel() {
   "${PYBIN}/virtualenv" -p "${PYBIN}/python" "${VENV_DIR}"
   # shellcheck source=/dev/null
   source "${VENV_DIR}/bin/activate"
-  pip install -U pip setuptools wheel
+  pip install -U pip setuptools wheel mypy
 
   echo "current dir: $(pwd)"
 

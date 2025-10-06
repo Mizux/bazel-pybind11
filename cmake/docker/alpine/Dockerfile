@@ -6,14 +6,10 @@ FROM alpine:edge AS env
 ENV PATH=/usr/local/bin:$PATH
 RUN apk add --no-cache \
  git build-base linux-headers cmake \
- python3-dev py3-pip py3-wheel
+ python3-dev py3-pip py3-wheel py3-virtualenv
 RUN rm -f /usr/lib/python3.*/EXTERNALLY-MANAGED \
-&& python3 -m pip install mypy
-
-# Install Python
-RUN apk add --no-cache \
- python3-dev py3-pip py3-wheel \
- py3-virtualenv
+&& python3 -m pip install \
+ mypy
 
 # Add the library src to our build env
 FROM env AS devel
