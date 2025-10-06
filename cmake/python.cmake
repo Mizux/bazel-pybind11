@@ -246,7 +246,10 @@ if(BUILD_TESTING)
     # Must NOT call it in a folder containing the setup.py otherwise pip call it
     # (i.e. "python setup.py bdist") while we want to consume the wheel package
     COMMAND ${VENV_Python3_EXECUTABLE} -m pip install
-      --find-links=${CMAKE_CURRENT_BINARY_DIR}/python/dist ${PYTHON_PROJECT}
+      --find-links=${CMAKE_CURRENT_BINARY_DIR}/python/dist ${PYTHON_PROJECT}==${PROJECT_VERSION}
+    # install modules only required to run examples
+    COMMAND ${VENV_Python3_EXECUTABLE} -m pip install
+      pytest
     BYPRODUCTS ${VENV_DIR}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Create venv and install ${PYTHON_PROJECT}"
