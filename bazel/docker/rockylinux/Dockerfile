@@ -14,16 +14,11 @@ RUN echo "source /opt/rh/gcc-toolset-13/enable" >> /etc/bashrc
 SHELL ["/bin/bash", "--login", "-c"]
 
 # Install Bazelisk
+ARG TARGETARCH=amd64
 RUN wget \
-https://github.com/bazelbuild/bazelisk/releases/download/v1.23.0/bazelisk-linux-amd64 \
-&& chmod +x bazelisk-linux-amd64 \
-&& mv bazelisk-linux-amd64 /usr/local/bin/bazel
-
-# Install Python
-RUN dnf -y update \
-&& dnf -y install python3-devel python3-pip \
-&& dnf clean all \
-&& rm -rf /var/cache/dnf
+https://github.com/bazelbuild/bazelisk/releases/download/v1.27.0/bazelisk-linux-${TARGETARCH} \
+&& chmod +x bazelisk-linux-${TARGETARCH} \
+&& mv bazelisk-linux-${TARGETARCH} /usr/local/bin/bazel
 
 # Add the library src to our build env
 FROM env AS devel
@@ -32,15 +27,7 @@ COPY . .
 
 FROM devel AS build
 RUN bazel version
-RUN bazel build \
- -c opt \
- --subcommands=pretty_print \
- --enable_bzlmod \
- ...
+RUN bazel build --config=ci //...
 
 FROM build AS test
-RUN bazel test \
- -c opt \
- --test_output=errors \
- --enable_bzlmod \
- ...
+RUN bazel test --config=ci //...

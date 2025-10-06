@@ -8,8 +8,8 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository", "new_git_r
 #
 ################################################################################
 
-## `bazel_skylib`
-# Needed for Abseil.
+# Bazel Extensions
+## Needed for Abseil.
 git_repository(
     name = "bazel_skylib",
     tag = "1.8.1",

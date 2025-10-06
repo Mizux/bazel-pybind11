@@ -8,7 +8,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  bazel:
+  docker:
     strategy:
       matrix:
         platform: [amd64] # arm64 riscv64
@@ -32,8 +32,8 @@ jobs:
       - name: Test project
         run: make --directory=bazel ${{matrix.platform}}_${{matrix.distro}}_test
 
-  amd64_docker:
+  amd64_docker_bazel:
     runs-on: ubuntu-latest
-    needs: bazel
+    needs: docker
     steps:
       - uses: actions/checkout@v5

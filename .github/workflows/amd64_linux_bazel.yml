@@ -9,72 +9,56 @@ concurrency:
 
 # Building using the github runner environement directly.
 jobs:
-  native:
+  bzlmod:
     strategy:
       matrix:
-        bazel: [
-          {compilation_mode: opt},
-          {compilation_mode: dbg},
-        ]
-        cpp: [
-          #{version: 14, flags: "-std=c++14"},
-          {version: 17, flags: "-std=c++17"},
-          #{version: 20, flags: "-std=c++20"},
-        ]
         python: [
-          #{version: '3.9'},
           #{version: '3.10'},
           {version: '3.11'},
           {version: '3.12'},
         ]
-        exclude:
-          # only test `-c dbg` build with C++17
-          - cpp: {version: 14}
-            bazel: {compilation_mode: dbg}
-          - cpp: {version: 20}
-            bazel: {compilation_mode: dbg}
       fail-fast: false
-    name: Linux•Bazel(${{matrix.bazel.compilation_mode}},C++${{matrix.cpp.version}})•Py${{matrix.python.version}}
+    name: Linux•Bazel(bzlmod)•Py${{matrix.python.version}}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - name: Check Java
-        run: java -version
-      - name: Setup Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: ${{matrix.python.version}}
-      - name: Check Python
-        run: |
-          python --version
-          python -m platform
       - uses: bazel-contrib/setup-bazel@0.15.0
         with:
           bazelisk-cache: true
           disk-cache: ${{github.workflow}}
           repository-cache: true
-      - name: Check Bazel
+      - name: Show Bazel version
+        run: bazel version
+      - name: Build
+        run: bazel build --config=ci --@rules_python//python/config_settings:python_version=${{matrix.python.version}} //...
+      - name: Test
+        run: bazel test --config=ci --@rules_python//python/config_settings:python_version=${{matrix.python.version}} //...
+
+  workspace:
+    name: Linux•Bazel(workspace)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: bazel-contrib/setup-bazel@0.15.0
+        with:
+          bazelisk-cache: true
+          disk-cache: ${{github.workflow}}
+          repository-cache: true
+      - name: Show Bazel version
         run: bazel version
       - name: Build
         run: >
-          bazel build
-          -c ${{matrix.bazel.compilation_mode}}
-          --cxxopt=${{matrix.cpp.flags}} --host_cxxopt=${{ matrix.cpp.flags }}
-          --subcommands=pretty_print
-          --enable_bzlmod
+          bazel build --config=ci
+          --noenable_bzlmod --enable_workspace
           //...
       - name: Test
         run: >
-          bazel test
-          -c ${{matrix.bazel.compilation_mode}}
-          --cxxopt=${{matrix.cpp.flags}} --host_cxxopt=${{ matrix.cpp.flags }}
-          --subcommands=pretty_print
-          --test_output=errors
-          --enable_bzlmod
+          bazel test --config=ci
+          --noenable_bzlmod --enable_workspace
           //...
 
   amd64_linux_bazel:
     runs-on: ubuntu-latest
-    needs: native
+    needs: [bzlmod, workspace]
     steps:
       - uses: actions/checkout@v5

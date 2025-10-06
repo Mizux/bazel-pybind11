@@ -10,28 +10,13 @@ RUN apk add --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/testing baze
 ENV JAVA_HOME=/usr/lib/jvm/default-jvm
 ENV PATH=$JAVA_HOME/bin:$PATH
 
-# Install Python
-RUN apk add --no-cache openssl python3-dev py3-pip py3-wheel
-RUN python3 -m pip install --break-system-package absl-py
-
 FROM env AS devel
 WORKDIR /home/project
 COPY . .
 
 FROM devel AS build
 RUN bazel version
-RUN bazel build \
- -c opt \
- --subcommands=pretty_print \
- --enable_bzlmod \
- ...
+RUN bazel build --config=ci //...
 
 FROM build AS test
-RUN bazel test \
- -c opt \
- --test_output=errors \
- --enable_bzlmod \
- ... \
- -- \
- -//bp11/foo/python:foo_test \
- -//pure_lib:mylib_test
+RUN bazel test --config=ci //...
