@@ -12,17 +12,19 @@ jobs:
   native:
     strategy:
       matrix:
+        cmake: [
+          {name: "VS22", generator: "Visual Studio 17 2022", config: Release, build_target: ALL_BUILD, test_target: RUN_TESTS, install_target: INSTALL},
+        ]
         python: [
           {version: '3.11'},
           {version: '3.12'},
           #{version: '3.13'},
         ]
-        cmake: [
-          {name: "VS22", generator: "Visual Studio 17 2022", config: Release, build_target: ALL_BUILD, test_target: RUN_TESTS, install_target: INSTALL},
-        ]
       fail-fast: false
     name: Windows•CMake(${{matrix.cmake.name}})•Py${{matrix.python.version}}
     runs-on: windows-latest
+    env:
+      CTEST_OUTPUT_ON_FAILURE: 1
     steps:
       - uses: actions/checkout@v5
       - name: Setup Python
@@ -50,9 +52,7 @@ jobs:
           --target ${{matrix.cmake.build_target}}
           -v -j2
       - name: Test
-        shell: bash
         run: >
-          CTEST_OUTPUT_ON_FAILURE=1
           cmake --build build
           --config ${{matrix.cmake.config}}
           --target ${{matrix.cmake.test_target}}

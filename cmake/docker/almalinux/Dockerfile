@@ -16,6 +16,7 @@ RUN dnf -y update \
 && dnf -y install python3-devel python3-pip \
 && dnf clean all \
 && rm -rf /var/cache/dnf
+RUN python3 -m pip install mypy
 
 # Add the library src to our build env
 FROM env AS devel

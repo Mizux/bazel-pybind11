@@ -16,7 +16,6 @@ RUN dnf -y update \
 && dnf -y install \
  python3 python3-devel python3-pip python3-wheel \
  python3-virtualenv \
- python3-numpy python3-pandas \
 && dnf clean all
 
 # Add the library src to our build env

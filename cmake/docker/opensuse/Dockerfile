@@ -16,6 +16,8 @@ RUN zypper update -y \
  python3-wheel python3-setuptools python3-virtualenv \
  python3-numpy python3-pandas \
 && zypper clean -a
+RUN python3 -m pip install --break-system-packages \
+ mypy
 
 # Add the library src to our build env
 FROM env AS devel

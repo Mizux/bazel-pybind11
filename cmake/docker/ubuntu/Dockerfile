@@ -15,12 +15,12 @@ RUN apt update -q \
 RUN apt update -q \
 && apt install -yq \
  python3-dev python3-pip \
- python3-setuptools python3-wheel \
  python3-venv python3-virtualenv \
+ python3-setuptools python3-wheel \
 && apt clean \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN python3 -m pip install --break-system-package \
- numpy pandas
+ mypy
 
 FROM env AS devel
 WORKDIR /home/project
