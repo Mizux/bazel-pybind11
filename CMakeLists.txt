@@ -66,11 +66,12 @@ else()
   endforeach()
 endif()
 
-if(BUILD_SHARED_LIBS AND MSVC)
+if(MSVC AND BUILD_SHARED_LIBS)
   set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 endif()
 
-# Build deps
+# Enable CCache if any
+include(ccache)
 
 # Disable CTest targets
 set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
