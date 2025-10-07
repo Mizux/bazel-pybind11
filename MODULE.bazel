@@ -1,5 +1,5 @@
 module(
-    name = "mizux_bp11",
+    name = "bazel-pybind11",
     version = "head",
 )
 
