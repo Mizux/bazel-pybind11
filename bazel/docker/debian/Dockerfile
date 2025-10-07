@@ -4,8 +4,10 @@ FROM debian:latest AS env
 
 # Install system build dependencies
 RUN apt update -qq \
-&& apt install -yq git wget curl libssl-dev build-essential \
-&& apt install -yq default-jdk \
+&& apt install -yq \
+ git wget curl libssl-dev \
+ build-essential \
+ python3 \
 && apt clean \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
