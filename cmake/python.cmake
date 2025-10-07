@@ -278,7 +278,7 @@ add_custom_command(
   DEPENDS
     python/setup.py
     python/foo_timestamp
-    python/foo_pybind11_timestamp
+    python/pybind11_timestamp
     $<$<BOOL:${GENERATE_PYTHON_STUB}>:python/stub_timestamp>
   BYPRODUCTS
     python/${PYTHON_PROJECT}
