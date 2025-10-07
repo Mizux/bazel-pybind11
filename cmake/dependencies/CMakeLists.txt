@@ -1,3 +1,6 @@
+# We are using FetchContent OVERRIDE_FIND_PACKAGE introduced in 3.24
+cmake_minimum_required(VERSION 3.24)
+
 include(FetchContent)
 set(FETCHCONTENT_QUIET OFF)
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
@@ -29,7 +32,7 @@ if(BUILD_absl)
   # subproject. Otherwise the install rules in this project break.
   set(ABSL_ENABLE_INSTALL ON)
   set(ABSL_BUILD_TESTING OFF)
-  set(ABSL_BUILD_TEST_HELPERS ON)
+  set(ABSL_BUILD_TEST_HELPERS OFF)
   set(ABSL_USE_EXTERNAL_GOOGLETEST ON)
   set(ABSL_FIND_GOOGLETEST OFF)
   FetchContent_MakeAvailable(absl)
@@ -73,6 +76,7 @@ if(BUILD_pybind11)
     GIT_REPOSITORY "https://github.com/pybind/pybind11.git"
     GIT_TAG "v2.13.6"
     GIT_SHALLOW TRUE
+    #UPDATE_COMMAND git reset --hard
     #PATCH_COMMAND git apply --ignore-whitespace
     #"${CMAKE_CURRENT_LIST_DIR}/../../patches/pybind11-v2.13.6.patch"
   )
@@ -100,8 +104,8 @@ if(BUILD_googletest)
     "${CMAKE_CURRENT_LIST_DIR}/../../patches/googletest-v1.17.0.patch"
   )
   set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-  set(INSTALL_GTEST ON)
   set(GTEST_HAS_ABSL ON)
+  set(INSTALL_GTEST ON)
   FetchContent_MakeAvailable(googletest)
   list(POP_BACK CMAKE_MESSAGE_INDENT)
   message(CHECK_PASS "fetched")

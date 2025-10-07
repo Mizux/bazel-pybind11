@@ -2,9 +2,10 @@
 cmake_minimum_required(VERSION 3.20)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-option(CMAKE_EXPORT_COMPILE_COMMANDS "Export compile command" TRUE)
+# Enable output of compile commands during generation.
+option(CMAKE_EXPORT_COMPILE_COMMANDS "Export compile command" ON)
 
-project(BazelPybind11 VERSION 1.0 LANGUAGES CXX)
+project(BazelPybind11 VERSION 1.0 LANGUAGES C CXX)
 set(PROJECT_NAMESPACE bp11)
 message(STATUS "${PROJECT_NAME} version: ${PROJECT_VERSION}")
 #message(STATUS "major: ${PROJECT_VERSION_MAJOR}")
@@ -52,8 +53,7 @@ if(UNIX)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/${OutputConfig}/${CMAKE_INSTALL_BINDIR})
   endforeach()
 else()
-  # Currently Only support static build for windows
-  option(BUILD_SHARED_LIBS "Build shared libraries (.dll)." OFF)
+  option(BUILD_SHARED_LIBS "Build shared libraries (.dll)." ON)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
@@ -97,13 +97,18 @@ option(GENERATE_PYTHON_STUB "Generate Python stub file (.pyi)" ON)
 message(STATUS "Python: Generate stub file: ${GENERATE_PYTHON_STUB}")
 
 option(FETCH_PYTHON_DEPS "Install python required modules if not available" ON)
-message(STATUS "Python fetch dependencies: ${FETCH_PYTHON_DEPS}")
+message(STATUS "Python: Fetch dependencies: ${FETCH_PYTHON_DEPS}")
+
+# Find system deps
+include(system_deps)
 
 # Build Needed dependencies
 add_subdirectory(cmake/dependencies dependencies)
 #list(APPEND CMAKE_PREFIX_PATH ${CMAKE_CURRENT_BINARY_DIR}/dependencies/install)
 
-include(deps)
+# verify deps
+include(check_deps)
+
 include(cpp)
 add_subdirectory(bp11/foo)
 

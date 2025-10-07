@@ -89,6 +89,63 @@ function(search_python_internal_module)
   endif()
 endfunction()
 
+###################
+##  Python Test  ##
+###################
+if(BUILD_TESTING)
+  search_python_module(NAME virtualenv PACKAGE virtualenv)
+  # venv not working on github windows runners
+  # search_python_internal_module(NAME venv)
+  # Testing using a vitual environment
+  set(VENV_EXECUTABLE ${Python3_EXECUTABLE} -m virtualenv)
+  #set(VENV_EXECUTABLE ${Python3_EXECUTABLE} -m venv)
+  set(VENV_DIR ${CMAKE_CURRENT_BINARY_DIR}/python/venv)
+  if(WIN32)
+    set(VENV_Python3_EXECUTABLE ${VENV_DIR}/Scripts/python.exe)
+  else()
+    set(VENV_Python3_EXECUTABLE ${VENV_DIR}/bin/python)
+  endif()
+endif()
+
+# add_python_test()
+# CMake function to generate and build python test.
+# Parameters:
+#  FILE_NAME: the python filename
+#  COMPONENT_NAME: name of the ortools/ subdir where the test is located
+#  note: automatically determined if located in ortools/<component>/python/
+# e.g.:
+# add_python_test(
+#   FILE_NAME
+#     ${PROJECT_SOURCE_DIR}/ortools/foo/python/bar_test.py
+#   COMPONENT_NAME
+#     foo
+# )
+function(add_python_test)
+  set(options "")
+  set(oneValueArgs FILE_NAME)
+  set(multiValueArgs "")
+  cmake_parse_arguments(TEST
+    "${options}"
+    "${oneValueArgs}"
+    "${multiValueArgs}"
+    ${ARGN}
+  )
+  if(NOT TEST_FILE_NAME)
+    message(FATAL_ERROR "no FILE_NAME provided")
+  endif()
+  get_filename_component(TEST_NAME ${TEST_FILE_NAME} NAME_WE)
+
+  message(STATUS "Configuring test ${TEST_FILE_NAME} ...")
+
+  if(BUILD_TESTING)
+    add_test(
+      NAME python_test_${TEST_NAME}
+      COMMAND ${VENV_Python3_EXECUTABLE} -m pytest ${TEST_FILE_NAME}
+      WORKING_DIRECTORY ${VENV_DIR})
+  endif()
+  message(STATUS "Configuring test ${TEST_FILE_NAME} ...DONE")
+endfunction()
+
 #######################
 ##  PYTHON WRAPPERS  ##
 #######################
@@ -101,7 +158,14 @@ message(STATUS "Python project build path: ${PYTHON_PROJECT_DIR}")
 ## Python Packaging  ##
 #######################
 #file(MAKE_DIRECTORY python/${PYTHON_PROJECT})
-file(GENERATE OUTPUT ${PYTHON_PROJECT_DIR}/__init__.py CONTENT "__version__ = \"${PROJECT_VERSION}\"\n")
+configure_file(
+  ${PROJECT_SOURCE_DIR}/python/__init__.py.in
+  ${PROJECT_BINARY_DIR}/python/__init__.py.in
+  @ONLY)
+file(GENERATE
+  OUTPUT ${PYTHON_PROJECT_DIR}/__init__.py
+  INPUT ${PROJECT_BINARY_DIR}/python/__init__.py.in)
+
 file(GENERATE OUTPUT ${PYTHON_PROJECT_DIR}/foo/__init__.py CONTENT "")
 file(GENERATE OUTPUT ${PYTHON_PROJECT_DIR}/foo/python/__init__.py CONTENT "")
 
@@ -125,15 +189,24 @@ file(GENERATE
 #  COMMAND ${CMAKE_COMMAND} -E copy setup.py setup.py
 #  WORKING_DIRECTORY python)
 
+set(is_windows "$<PLATFORM_ID:Windows>")
+set(is_not_windows "$<NOT:$<PLATFORM_ID:Windows>>")
+
+set(is_foo_shared "$<STREQUAL:$<TARGET_PROPERTY:foo,TYPE>,SHARED_LIBRARY>")
+set(need_unix_foo_lib "$<AND:${is_not_windows},${is_foo_shared}>")
+set(need_windows_foo_lib "$<AND:${is_windows},${is_foo_shared}>")
+
 add_custom_command(
   OUTPUT python/foo_timestamp
   COMMAND ${CMAKE_COMMAND} -E remove -f foo_timestamp
   COMMAND ${CMAKE_COMMAND} -E make_directory ${PYTHON_PROJECT}/.libs
-  # Don't need to copy static lib on Windows.
+
   COMMAND ${CMAKE_COMMAND} -E
-   $<IF:$<STREQUAL:$<TARGET_PROPERTY:foo,TYPE>,SHARED_LIBRARY>,copy,true>
-   $<$<STREQUAL:$<TARGET_PROPERTY:foo,TYPE>,SHARED_LIBRARY>:$<TARGET_SONAME_FILE:foo>>
-   ${PYTHON_PROJECT}/.libs
+    $<IF:${is_foo_shared},copy,true>
+    $<${need_unix_foo_lib}:$<TARGET_SONAME_FILE:foo>>
+    $<${need_windows_foo_lib}:$<TARGET_FILE:foo>>
+    ${PYTHON_PROJECT}/.libs
+
   COMMAND ${CMAKE_COMMAND} -E touch ${PROJECT_BINARY_DIR}/python/foo_timestamp
   MAIN_DEPENDENCY
     python/setup.py.in
@@ -144,11 +217,11 @@ add_custom_command(
   COMMAND_EXPAND_LISTS)
 
 add_custom_command(
-  OUTPUT python/foo_pybind11_timestamp
-  COMMAND ${CMAKE_COMMAND} -E remove -f foo_pybind11_timestamp
+  OUTPUT python/pybind11_timestamp
+  COMMAND ${CMAKE_COMMAND} -E remove -f pybind11_timestamp
   COMMAND ${CMAKE_COMMAND} -E copy
     $<TARGET_FILE:foo_pybind11> ${PYTHON_PROJECT}/foo/python
-  COMMAND ${CMAKE_COMMAND} -E touch ${PROJECT_BINARY_DIR}/python/foo_pybind11_timestamp
+  COMMAND ${CMAKE_COMMAND} -E touch ${PROJECT_BINARY_DIR}/python/pybind11_timestamp
   MAIN_DEPENDENCY
     python/setup.py.in
   DEPENDS
@@ -181,7 +254,7 @@ add_custom_command(
     python/setup.py.in
   DEPENDS
     python/foo_timestamp
-    python/foo_pybind11_timestamp
+    python/pybind11_timestamp
   WORKING_DIRECTORY python
   COMMAND_EXPAND_LISTS)
 endif()
@@ -221,27 +294,13 @@ add_custom_target(python_package ALL
     python/dist_timestamp
   WORKING_DIRECTORY python)
 
-###################
-##  Python Test  ##
-###################
 if(BUILD_TESTING)
-  search_python_module(NAME virtualenv PACKAGE virtualenv)
-  # venv not working on github windows runners
-  # search_python_internal_module(NAME venv)
-  # Testing using a vitual environment
-  set(VENV_EXECUTABLE ${Python3_EXECUTABLE} -m virtualenv)
-  #set(VENV_EXECUTABLE ${Python3_EXECUTABLE} -m venv)
-  set(VENV_DIR ${CMAKE_CURRENT_BINARY_DIR}/python/venv)
-  if(WIN32)
-    set(VENV_Python3_EXECUTABLE ${VENV_DIR}/Scripts/python.exe)
-  else()
-    set(VENV_Python3_EXECUTABLE ${VENV_DIR}/bin/python)
-  endif()
   # make a virtualenv to install our python package in it
   add_custom_command(TARGET python_package POST_BUILD
     # Clean previous install otherwise pip install may do nothing
     COMMAND ${CMAKE_COMMAND} -E remove_directory ${VENV_DIR}
-    COMMAND ${VENV_EXECUTABLE} -p ${Python3_EXECUTABLE} ${VENV_DIR}
+    COMMAND ${VENV_EXECUTABLE} -p ${Python3_EXECUTABLE}
+      ${VENV_DIR}
     #COMMAND ${VENV_EXECUTABLE} ${VENV_DIR}
     # Must NOT call it in a folder containing the setup.py otherwise pip call it
     # (i.e. "python setup.py bdist") while we want to consume the wheel package
@@ -255,22 +314,3 @@ if(BUILD_TESTING)
     COMMENT "Create venv and install ${PYTHON_PROJECT}"
     VERBATIM)
 endif()
-
-# add_python_test()
-# CMake function to generate and build python test.
-# Parameters:
-#  the python filename
-# e.g.:
-# add_python_test(foo_test.py)
-function(add_python_test FILE_NAME)
-  message(STATUS "Configuring test ${FILE_NAME} ...")
-  get_filename_component(EXAMPLE_NAME ${FILE_NAME} NAME_WE)
-
-  if(BUILD_TESTING)
-    add_test(
-      NAME python_test_${EXAMPLE_NAME}
-      COMMAND ${VENV_Python3_EXECUTABLE} ${FILE_NAME}
-      WORKING_DIRECTORY ${VENV_DIR})
-  endif()
-  message(STATUS "Configuring test ${FILE_NAME} done")
-endfunction()

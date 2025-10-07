@@ -9,18 +9,20 @@ find_package(Threads REQUIRED)
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
 
 if(BUILD_TESTING)
-  if(NOT BUILD_googletest)
-    find_package(googletest REQUIRED)
+  if(NOT BUILD_absl AND NOT TARGET absl::base)
+    find_package(absl REQUIRED)
   endif()
-  if(NOT TARGET GTest::gtest)
-    message(FATAL_ERROR "Target GTest::gtest not available.")
+  
+  if(NOT BUILD_re2 AND NOT TARGET re2::re2)
+    find_package(re2 REQUIRED)
   endif()
-  if(NOT TARGET GTest::gtest_main)
-    message(FATAL_ERROR "Target GTest::gtest_main not available.")
+
+  if(NOT BUILD_googletest AND NOT TARGET GTest::gtest_main)
+    find_package(GTest REQUIRED)
   endif()
 endif()
 
 # Check language Dependencies
-if(NOT BUILD_pybind11)
+if(NOT BUILD_pybind11 AND NOT TARGET pybind11::pybind11_headers)
   find_package(pybind11 REQUIRED)
 endif()
