@@ -1,5 +1,5 @@
 r'''
-# Bazel PyBind11 Abseil
+# Bazel PyBind11
 
 This is the reference documentation for Pybind11 Abseil.
 '''
@@ -20,7 +20,7 @@ def _load_dynamic_libs():
         except:
             logger.error(f"ImportError: Cannot import WinDLL")
         else:
-            for dll in ["abseil_dll.dll", "foo.dll"]:
+            for dll in ["foo.dll"]:
                 dll_path = os.path.join(basedir, ".libs", dll)
                 if os.path.exists(dll_path):
                     logger.debug(f"Loading {dll_path}...")
