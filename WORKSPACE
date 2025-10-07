@@ -69,7 +69,8 @@ python_register_multi_toolchains(
 ## `pybind11_bazel`
 git_repository(
     name = "pybind11_bazel",
-    tag = "v2.13.6", # 2024/04/08
+    commit = "2b6082a4d9d163a52299718113fa41e4b7978db5",
+    #tag = "v2.13.6", # 2024/04/08
     patches = ["//patches:pybind11_bazel.patch"],
     patch_args = ["-p1"],
     remote = "https://github.com/pybind/pybind11_bazel.git",
@@ -80,7 +81,8 @@ git_repository(
 new_git_repository(
     name = "pybind11",
     build_file = "@pybind11_bazel//:pybind11-BUILD.bazel",
-    tag = "v2.13.6",
+    commit = "a2e59f0e7065404b44dfe92a28aca47ba1378dc4",
+    #tag = "v2.13.6",
     remote = "https://github.com/pybind/pybind11.git",
 )
 
