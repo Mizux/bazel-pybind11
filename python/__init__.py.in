@@ -13,7 +13,7 @@ import logging
 def _load_dynamic_libs():
     """Load shared libraries on Windows"""
     if os.name == "nt":
-        logger = logging.getLogger("ortools")
+        logger = logging.getLogger("bp11")
         try:
             from ctypes import WinDLL
             basedir = os.path.dirname(__file__)
