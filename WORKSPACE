@@ -53,19 +53,28 @@ git_repository(
 load("@rules_python//python:repositories.bzl", "py_repositories")
 py_repositories()
 
-load("@rules_python//python:repositories.bzl", "python_register_multi_toolchains")
 DEFAULT_PYTHON = "3.12"
-python_register_multi_toolchains(
+
+load("@rules_python//python:repositories.bzl", "python_register_toolchains")
+python_register_toolchains(
     name = "python",
-    default_version = DEFAULT_PYTHON,
-    python_versions = [
-      "3.12",
-      "3.11",
-      "3.10",
-      "3.9",
-    ],
-    ignore_root_user_error=True,
+    # Available versions are listed in @rules_python//python:versions.bzl.
+    # We recommend using the same version your team is already standardized on.
+    python_version = DEFAULT_PYTHON,
 )
+
+#load("@rules_python//python:repositories.bzl", "python_register_multi_toolchains")
+#python_register_multi_toolchains(
+#    name = "python",
+#    default_version = DEFAULT_PYTHON,
+#    python_versions = [
+#      "3.12",
+#      "3.11",
+#      "3.10",
+#      "3.9",
+#    ],
+#    ignore_root_user_error=True,
+#)
 
 ## `pybind11_bazel`
 git_repository(
