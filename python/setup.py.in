@@ -1,5 +1,18 @@
-from setuptools import find_packages, setup
-from setuptools.dist import Distribution
+from sys import executable
+from os.path import join as pjoin
+from os.path import dirname
+
+setuptools_import_error_message = """setuptools is not installed for """ + executable + """
+Please follow this link for installing instructions :
+https://pypi.python.org/pypi/setuptools
+make sure you use \"""" + executable + """\" during the installation"""
+
+try:
+    from setuptools import find_packages, setup
+    from setuptools.dist import Distribution
+    from setuptools.command.install import install
+except ImportError:
+    raise ImportError(setuptools_import_error_message)
 
 
 class BinaryDistribution(Distribution):
@@ -10,9 +23,6 @@ class BinaryDistribution(Distribution):
         return True
 
 
-from setuptools.command.install import install
-
-
 class InstallPlatlib(install):
     def finalize_options(self):
         install.finalize_options(self)
@@ -20,39 +30,52 @@ class InstallPlatlib(install):
 
 
 setup(
-    name="@PYTHON_PROJECT@",
-    version="@PROJECT_VERSION@",
-    author="Mizux",
-    author_email='"Mizux Seiha" <mizux.dev@gmail.com>',
-    url="https://github.com/Mizux/bazel-pybind11",
-    distclass=BinaryDistribution,
-    cmdclass={"install": InstallPlatlib},
+    name='@PYTHON_PROJECT@',
+    version='@PROJECT_VERSION@',
     packages=find_packages(),
-    python_requires=">= 3.8",
+    python_requires='>= 3.9',
     package_data={
-        "@PYTHON_PROJECT@": [$<$<NOT:$<PLATFORM_ID:Windows>>:".libs/*">],
-        "@PYTHON_PROJECT@.foo": ["*.pyi"],
-        "@PYTHON_PROJECT@.foo.python": ["$<TARGET_FILE_NAME:foo_pybind11>", "*.pyi"],
+        '@PYTHON_PROJECT@':['.libs/*'],
+        '@PYTHON_PROJECT@.foo':['*.pyi'],
+        '@PYTHON_PROJECT@.foo.python':['$<TARGET_FILE_NAME:foo_pybind11>', '*.pyi'],
     },
     include_package_data=True,
-    license="Apache 2.0",
+    license='Apache 2.0',
+    author='Mizux',
+    author_email='"Mizux Seiha" <mizux.dev@gmail.com>',
+    url='https://github.com/Mizux/bazel-pybind11',
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
-        "Environment :: Console",
-        "Intended Audience :: Developers",
-        "License :: OSI Approved :: Apache Software License",
-        "Operating System :: POSIX :: Linux",
-        "Operating System :: MacOS :: MacOS X",
-        "Operating System :: Microsoft :: Windows",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3.11",
-        "Programming Language :: Python :: 3.12",
-        "Programming Language :: Python :: 3.13",
-        "Programming Language :: C++",
-        "Topic :: Scientific/Engineering",
-        "Topic :: Software Development :: Libraries :: Python Modules",
+        'Development Status :: 5 - Production/Stable',
+        'Environment :: Console',
+        'Intended Audience :: Developers',
+        'Intended Audience :: Education',
+        'Intended Audience :: Information Technology',
+        'Intended Audience :: Science/Research',
+        'License :: OSI Approved :: Apache Software License',
+        'Operating System :: Unix',
+        'Operating System :: POSIX :: Linux',
+        'Operating System :: POSIX :: BSD :: FreeBSD',
+        'Operating System :: POSIX :: BSD :: NetBSD',
+        'Operating System :: POSIX :: BSD :: OpenBSD',
+        'Operating System :: MacOS',
+        'Operating System :: MacOS :: MacOS X',
+        'Operating System :: Microsoft :: Windows',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
+        'Programming Language :: C++',
+        'Programming Language :: Python :: Implementation :: CPython',
+        'Topic :: Office/Business',
+        'Topic :: Scientific/Engineering',
+        'Topic :: Scientific/Engineering :: Mathematics',
+        'Topic :: Software Development',
+        'Topic :: Software Development :: Libraries :: Python Modules',
     ],
+    distclass=BinaryDistribution,
+    cmdclass={'install': InstallPlatlib},
 )
