@@ -8,10 +8,18 @@ concurrency:
   cancel-in-progress: true
 
 # Building using the github runner environement directly.
+env:
+  CCACHE_BASEDIR: ${{github.workspace}}
+  CCACHE_DIR: ${{github.workspace}}/.ccache
+
 jobs:
   native:
     strategy:
       matrix:
+        cmake: [
+          {name: "Xcode", generator: "Xcode", config: Release, build_target: ALL_BUILD, test_target: RUN_TESTS, install_target: install},
+          {name: "Make", generator: "Unix Makefiles", config: Release, build_target: all, test_target: test, install_target: install},
+        ]
         python: [
           #{version: '3.9'},
           #{version: '3.10'},
@@ -19,13 +27,13 @@ jobs:
           {version: '3.12'},
           #{version: '3.13'},
         ]
-        cmake: [
-          {name: "Xcode", generator: "Xcode", config: Release, build_target: ALL_BUILD, test_target: RUN_TESTS, install_target: install},
-          {name: "Make", generator: "Unix Makefiles", config: Release, build_target: all, test_target: test, install_target: install},
-        ]
       fail-fast: false
-    name: MacOS•CMake(${{matrix.cmake.name}})•Py${{matrix.python.version}}
+    name: amd64•MacOS•${{matrix.cmake.name}}•Py${{matrix.python.version}}
     runs-on: macos-15-intel
+    env:
+      deps_src_key: amd64_macos_deps_src
+      deps_build_key: amd64_macos_deps_build_${{matrix.cmake.name}}
+      ccache_key: amd64_macos_ccache_${{matrix.cmake.name}}
     steps:
       - uses: actions/checkout@v5
       - name: Setup Python
@@ -38,6 +46,31 @@ jobs:
           echo "$HOME/.local/bin" >> $GITHUB_PATH
       - name: Check Python
         run: python --version
+      - name: Install Dependencies
+        run: brew install ccache
+
+      # CONFIGURING CACHES
+      - name: Cache CMake dependency source code
+        uses: actions/cache@v4
+        with:
+          key: ${{env.deps_src_key}}-${{hashFiles('CMakeLists.txt', 'cmake/**')}}
+          path: ${{github.workspace}}/build/_deps/*-src
+      - name: Cache CMake dependency build
+        uses: actions/cache@v4
+        with:
+          key: ${{env.deps_build_key}}-${{hashFiles('CMakeLists.txt', 'cmake/**')}}
+          path: |
+            ${{github.workspace}}/build/_deps/*-build
+            ${{github.workspace}}/build/_deps/*-subbuild
+      - name: Cache CCache
+        uses: actions/cache@v4
+        with:
+          key: ${{env.ccache_key}}-${{github.sha}}
+          restore-keys: |
+            ${{env.ccache_key}}-${{github.sha}}
+            ${{env.ccache_key}}
+          path: ${{env.CCACHE_DIR}}
+
       - name: Check CMake
         run: cmake --version
       - name: Configure
@@ -65,6 +98,10 @@ jobs:
           --config ${{matrix.cmake.config}}
           --target ${{matrix.cmake.install_target}}
           -v
+      - name: CCache stats and cleanup
+        run: |
+          ccache --show-stats
+          ccache --zero-stats
 
   amd64_macos_cmake:
     runs-on: ubuntu-latest
