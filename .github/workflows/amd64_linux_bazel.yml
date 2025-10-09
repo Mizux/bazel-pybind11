@@ -13,9 +13,10 @@ jobs:
     strategy:
       matrix:
         python: [
-          #{version: '3.10'},
+          {version: '3.10'},
           {version: '3.11'},
           {version: '3.12'},
+          #{version: '3.13'},
         ]
       fail-fast: false
     name: Linux•Bazel(bzlmod)•Py${{matrix.python.version}}
@@ -30,9 +31,15 @@ jobs:
       - name: Show Bazel version
         run: bazel version
       - name: Build
-        run: bazel build --config=ci --@rules_python//python/config_settings:python_version=${{matrix.python.version}} //...
+        run: >
+          bazel build --config=ci
+          --@rules_python//python/config_settings:python_version=${{matrix.python.version}}
+          //...
       - name: Test
-        run: bazel test --config=ci --@rules_python//python/config_settings:python_version=${{matrix.python.version}} //...
+        run: >
+          bazel test --config=ci
+          --@rules_python//python/config_settings:python_version=${{matrix.python.version}}
+          //...
 
   workspace:
     name: Linux•Bazel(workspace)
