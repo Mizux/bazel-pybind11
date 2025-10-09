@@ -19,7 +19,7 @@ jobs:
           {version: '3.12'},
         ]
       fail-fast: false # Don't cancel all jobs if one fails.
-    name: windows•Bazel•Py${{ matrix.python.version }}
+    name: windows•Bazel•Py${{matrix.python.version}}
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v5
