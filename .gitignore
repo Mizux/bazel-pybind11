@@ -8,11 +8,17 @@ build/
 build*/
 export/
 cache/
-
 __pycache__
 
 # EDITORS
+.vagrant/
 .vs/
 .vscode/
+.cache/
+# Kdevelop
+.kdev4/
+*.kdev4
+# vim
+compile_commands.json
 *.swp
 *.user
