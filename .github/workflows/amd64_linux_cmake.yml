@@ -46,9 +46,7 @@ jobs:
           python --version
           python -m platform
       - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt install -y ninja-build ccache
+        run: sudo apt install -y ninja-build ccache
 
       # CONFIGURING CACHES
       - name: Cache CMake dependency source code
