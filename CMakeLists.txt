@@ -1,11 +1,11 @@
 # This file is just an orchestration
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.24..3.31)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # Enable output of compile commands during generation.
 option(CMAKE_EXPORT_COMPILE_COMMANDS "Export compile command" ON)
 
-project(BazelPybind11 VERSION 1.0 LANGUAGES C CXX)
+project(BazelPybind11 VERSION 1.0.0 LANGUAGES C CXX)
 set(PROJECT_NAMESPACE bp11)
 message(STATUS "${PROJECT_NAME} version: ${PROJECT_VERSION}")
 #message(STATUS "major: ${PROJECT_VERSION_MAJOR}")
@@ -74,6 +74,8 @@ endif()
 # Enable CCache if any
 include(ccache)
 
+# Build deps
+
 # Disable CTest targets
 set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
 include(CTest)
@@ -99,6 +101,9 @@ message(STATUS "Python: Generate stub file: ${GENERATE_PYTHON_STUB}")
 
 option(FETCH_PYTHON_DEPS "Install python required modules if not available" ON)
 message(STATUS "Python: Fetch dependencies: ${FETCH_PYTHON_DEPS}")
+
+option(VENV_USE_SYSTEM_SITE_PACKAGES "Python venv can use system site packages" OFF)
+message(STATUS "Python: Allow venv to use system site packages: ${VENV_USE_SYSTEM_SITE_PACKAGES}")
 
 # Find system deps
 include(system_deps)

@@ -1,6 +1,3 @@
-# We are using FetchContent OVERRIDE_FIND_PACKAGE introduced in 3.24
-cmake_minimum_required(VERSION 3.24)
-
 include(FetchContent)
 set(FETCHCONTENT_QUIET OFF)
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
@@ -49,11 +46,11 @@ if(BUILD_re2)
   FetchContent_Declare(
     re2
     GIT_REPOSITORY "https://github.com/google/re2.git"
-    GIT_TAG "2024-07-02"
+    GIT_TAG "2025-08-12"
     GIT_SHALLOW TRUE
     UPDATE_COMMAND git reset --hard
     PATCH_COMMAND git apply --ignore-whitespace
-    "${CMAKE_CURRENT_LIST_DIR}/../../patches/re2-2024-07-02.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/../../patches/re2-2025-08-12.patch"
   )
   set(RE2_BUILD_TESTING OFF)
   FetchContent_MakeAvailable(re2)
@@ -74,11 +71,11 @@ if(BUILD_pybind11)
   FetchContent_Declare(
     pybind11
     GIT_REPOSITORY "https://github.com/pybind/pybind11.git"
-    GIT_TAG "v2.13.6"
+    GIT_TAG "v3.0.0"
     GIT_SHALLOW TRUE
     #UPDATE_COMMAND git reset --hard
     #PATCH_COMMAND git apply --ignore-whitespace
-    #"${CMAKE_CURRENT_LIST_DIR}/../../patches/pybind11-v2.13.6.patch"
+    # "${CMAKE_CURRENT_LIST_DIR}/../../patches/pybind11-v3.0.0.patch"
   )
   set(PYBIND11_FINDPYTHON ON)
   set(PYBIND11_INSTALL ON)
