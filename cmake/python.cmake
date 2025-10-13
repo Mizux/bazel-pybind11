@@ -229,7 +229,6 @@ add_custom_command(
   WORKING_DIRECTORY python
   COMMAND_EXPAND_LISTS)
 
-
 # Generate Stub
 if(GENERATE_PYTHON_STUB)
 # Look for required python modules

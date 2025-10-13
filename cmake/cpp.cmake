@@ -66,6 +66,12 @@ endfunction()
 ###################
 ## CMake Install ##
 ###################
+include(GNUInstallDirs)
+#include(GenerateExportHeader)
+#GENERATE_EXPORT_HEADER(${PROJECT_NAME})
+#install(FILES ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_export.h
+#  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
 install(EXPORT ${PROJECT_NAME}Targets
   NAMESPACE ${PROJECT_NAMESPACE}::
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
