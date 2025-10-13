@@ -1,24 +1,21 @@
+# Native build
+.cache/
+.vagrant/
 bazel-*
 user.bazelrc
-
 # Ignore Bzlmod lock file until it is more stable
 MODULE.bazel.lock
-
 build/
 build*/
-export/
 cache/
+compile_commands.json
+export/
 __pycache__
 
-# EDITORS
-.vagrant/
-.vs/
-.vscode/
-.cache/
-# Kdevelop
+# Editors
 .kdev4/
 *.kdev4
-# vim
-compile_commands.json
 *.swp
 *.user
+.vs/
+.vscode/

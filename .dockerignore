@@ -16,19 +16,30 @@ docs
 # Bazel
 bazel/docker
 bazel/docs
+bazel/Makefile
+bazel/cache
 
-cmake/docker/**/Dockerfile
+# CMake
+cmake/docker
 cmake/docs
-**/Makefile
-
-
+cmake/Makefile
+cmake/cache
 
 # Native build
+.cache/
+.vagrant/
 bazel-*/
 *.lock
 build/
 build*/
+cache/
+compile_commands.json
+export/
 
-# Editor directories and files
-*.user
+# Editors
+.kdev4/
+*.kdev4
 *.swp
+*.user
+.vs/
+.vscode/
