@@ -109,17 +109,22 @@ Few links on the subject...
 ### Resources
 
 Project layout:
-
-* The Pitchfork Layout Revision 1 (cxx-pflR1)
+* [The Pitchfork Layout Revision 1 (cxx-pflR1)](https://github.com/vector-of-bool/pitchfork)
 
 Bazel:
-
 * https://docs.bazel.build/versions
 
+CMake:
+* https://llvm.org/docs/CMakePrimer.html
+* https://cliutils.gitlab.io/modern-cmake/
+* https://cgold.readthedocs.io/en/latest/
+
+Python:
+* [Packaging Python Project](https://packaging.python.org/tutorials/packaging-projects/)
+* [PEP 600  Future 'manylinux' Platform Tags](https://www.python.org/dev/peps/pep-0600/)
+
 ### Misc
-
 Image has been generated using [plantuml](http://plantuml.com/):
-
 ```bash
 plantuml -Tsvg docs/{file}.dot
 ```
@@ -133,3 +138,4 @@ Apache 2. See the LICENSE file for details.
 
 This is not an official Google product, it is just code that happens to be
 owned by Google.
+
