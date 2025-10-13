@@ -1,4 +1,4 @@
-"""MyLib module """
+"""MyLib module"""
 
 import sys
 
