@@ -22,7 +22,7 @@ add_library(${PROJECT_NAMESPACE}::foo ALIAS foo)
 add_cxx_test(
   NAME foo_test
   SOURCES foo_test.cpp
-  LINK_LIBRARIES ${PROJECT_NAMESPACE}::Foo
+  LINK_LIBRARIES ${PROJECT_NAMESPACE}::foo
 )
 
 # Install
