@@ -4,7 +4,7 @@ load("@pybind11_bazel//:build_defs.bzl", "pybind_extension")
 
 pybind_extension(
     name = "pyfoo",
-    srcs = ["foo.cpp"],
+    srcs = ["foo.cc"],
     deps = ["//bp11/foo:foo"],
 )
 

@@ -1,4 +1,4 @@
-#include "bp11/foo/foo.hpp"
+#include "bp11/foo/foo.h"
 
 #include <iostream>
 #include <string>
