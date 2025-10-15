@@ -28,7 +28,106 @@ if(CHECK_TYPE)
   cmake_pop_check_state()
 endif()
 
-include(GNUInstallDirs)
+###################
+##  C++ Library  ##
+###################
+# add_cxx_library()
+# CMake function to generate and build C++ library.
+# Parameters:
+# NAME: CMake target name
+# [HEADERS]: List of headers files
+# SOURCES: List of source files
+# [TYPE]: SHARED, STATIC or INTERFACE
+# [COMPILE_DEFINITIONS]: List of private compile definitions
+# [COMPILE_OPTIONS]: List of private compile options
+# [LINK_LIBRARIES]: List of **public** libraries to use when linking
+# note: ortools::ortools is always linked to the target
+# [LINK_OPTIONS]: List of private link options
+# [INSTALL_DIR]: relative path to install public headers
+# e.g.:
+# add_cxx_library(
+#   NAME
+#     foo
+#   HEADERS
+#     foo.h
+#   SOURCES
+#     foo.cc
+#     ${PROJECT_SOURCE_DIR}/Foo/foo.cc
+#   TYPE
+#     SHARED
+#   LINK_LIBRARIES
+#     GTest::gmock
+#     GTest::gtest_main
+#   TESTING
+# )
+function(add_cxx_library)
+  set(options "TESTING")
+  set(oneValueArgs "NAME;TYPE;INSTALL_DIR")
+  set(multiValueArgs
+    "HEADERS;SOURCES;COMPILE_DEFINITIONS;COMPILE_OPTIONS;LINK_LIBRARIES;LINK_OPTIONS")
+  cmake_parse_arguments(LIBRARY
+    "${options}"
+    "${oneValueArgs}"
+    "${multiValueArgs}"
+    ${ARGN}
+  )
+  if(LIBRARY_TESTING AND NOT BUILD_TESTING)
+    return()
+  endif()
+
+  if(NOT LIBRARY_NAME)
+    message(FATAL_ERROR "no NAME provided")
+  endif()
+  if(NOT LIBRARY_SOURCES)
+    message(FATAL_ERROR "no SOURCES provided")
+  endif()
+  message(STATUS "Configuring library ${LIBRARY_NAME} ...")
+
+  add_library(${LIBRARY_NAME} ${LIBRARY_TYPE} "")
+  if(LIBRARY_TYPE STREQUAL "INTERFACE")
+    target_include_directories(${LIBRARY_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+    target_link_libraries(${LIBRARY_NAME} INTERFACE ${LIBRARY_LINK_LIBRARIES})
+    target_link_options(${LIBRARY_NAME} INTERFACE ${LIBRARY_LINK_OPTIONS})
+  else()
+    target_include_directories(${LIBRARY_NAME} PUBLIC
+      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+      $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+      $<INSTALL_INTERFACE:include>
+    )
+    target_sources(${LIBRARY_NAME} PRIVATE
+      ${LIBRARY_HEADERS}
+      ${LIBRARY_SOURCES}
+    )
+    target_compile_features(${LIBRARY_NAME} PRIVATE cxx_std_20)
+    target_compile_definitions(${LIBRARY_NAME} PRIVATE ${LIBRARY_COMPILE_DEFINITIONS})
+    target_compile_options(${LIBRARY_NAME} PRIVATE ${LIBRARY_COMPILE_OPTIONS})
+    target_link_libraries(${LIBRARY_NAME} PUBLIC ${LIBRARY_LINK_LIBRARIES})
+    target_link_options(${LIBRARY_NAME} PRIVATE ${LIBRARY_LINK_OPTIONS})
+  endif()
+  set_target_properties(${LIBRARY_NAME} PROPERTIES
+    VERSION ${PROJECT_VERSION}
+    POSITION_INDEPENDENT_CODE ON
+    PUBLIC_HEADER "${LIBRARY_HEADERS}"
+  )
+
+  if(APPLE)
+    set_target_properties(${LIBRARY_NAME} PROPERTIES INSTALL_RPATH "@loader_path")
+  elseif(UNIX)
+    set_target_properties(${LIBRARY_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN")
+  endif()
+
+  # Install
+  include(GNUInstallDirs)
+  install(TARGETS ${LIBRARY_NAME}
+    EXPORT ${PROJECT_NAME}Targets
+    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${LIBRARY_INSTALL_DIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    #RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  )
+  add_library(${PROJECT_NAMESPACE}::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
+  message(STATUS "Configuring library ${LIBRARY_NAME} ...DONE")
+endfunction()
 
 ################
 ##  C++ Test  ##
@@ -118,7 +217,6 @@ include(GNUInstallDirs)
 #GENERATE_EXPORT_HEADER(${PROJECT_NAME})
 #install(FILES ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_export.h
 #  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-
 install(EXPORT ${PROJECT_NAME}Targets
   NAMESPACE ${PROJECT_NAMESPACE}::
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
