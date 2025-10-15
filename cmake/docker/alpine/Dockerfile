@@ -6,10 +6,9 @@ FROM alpine:edge AS env
 ENV PATH=/usr/local/bin:$PATH
 RUN apk add --no-cache \
  git build-base linux-headers cmake \
- python3-dev py3-pip py3-wheel py3-virtualenv
-RUN rm -f /usr/lib/python3.*/EXTERNALLY-MANAGED \
-&& python3 -m pip install \
- mypy
+ python3 python3-dev py3-pip py3-wheel \
+ py3-virtualenv \
+ py3-mypy
 
 # Add the library src to our build env
 FROM env AS devel
@@ -28,9 +27,7 @@ RUN CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test -v
 # Test install rules
 FROM env AS install_env
 COPY --from=build /home/project/build/python/dist/*.whl ./
-RUN python3 -m pip install \
- --break-system-packages \
- --find-links=. \
+RUN python3 -m pip install --break-system-packages --find-links=. \
  bp11*.whl
 
 FROM install_env AS install_devel

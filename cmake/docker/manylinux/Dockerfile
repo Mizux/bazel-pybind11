@@ -35,8 +35,9 @@ RUN apt update -q \
 && apt clean \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-COPY --from=build /home/project/build*/python/dist/bp11*-manylinux*.whl ./
-RUN python3 -m pip install --break-system-packages --find-links=. bp11
+COPY --from=build /home/project/build*/python/dist/*.whl ./
+RUN python3 -m pip install --break-system-packages --find-links=. \
+ bp11
 RUN python3 -m pip show bp11
 
 FROM install_env AS install_devel

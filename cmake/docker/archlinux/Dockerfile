@@ -6,8 +6,8 @@ FROM archlinux:latest AS env
 ENV PATH=/root/.local/bin:$PATH
 RUN pacman -Syu --noconfirm \
  git base-devel cmake \
- python python-pip \
- python-wheel python-virtualenv python-setuptools
+ python python-pip python-wheel python-setuptools \
+ python-virtualenv
 RUN python -m pip install --break-system-package \
  mypy
 
@@ -28,8 +28,7 @@ RUN CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test -v
 # Test install rules
 FROM env AS install_env
 COPY --from=build /home/project/build/python/dist/*.whl ./
-RUN python -m pip install \
- --find-links=. \
+RUN python -m pip install --find-links=. \
  --break-system-packages \
  bp11*.whl
 

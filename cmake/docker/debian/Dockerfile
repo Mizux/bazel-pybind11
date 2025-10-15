@@ -6,8 +6,7 @@ FROM debian:latest AS env
 ENV PATH=/usr/local/bin:$PATH
 RUN apt update -qq \
 && apt install -yq \
- git wget libssl-dev \
- build-essential cmake \
+ git wget libssl-dev build-essential cmake \
 && apt clean \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -17,6 +16,7 @@ RUN apt update -qq \
  python3-dev python3-pip \
  python3-venv python3-virtualenv \
  python3-setuptools python3-wheel \
+ python3-numpy python3-pandas \
 && apt clean \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN python3 -m pip install --break-system-package \
@@ -39,8 +39,8 @@ RUN CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test -v
 # Test install rules
 FROM env AS install_env
 COPY --from=build /home/project/build/python/dist/*.whl ./
-RUN python3 -m pip install --break-system-packages \
- --find-links=. \
+RUN python3 -m pip install --find-links=. \
+ --break-system-packages \
  bp11*.whl
 
 FROM install_env AS install_devel
