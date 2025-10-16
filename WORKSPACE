@@ -53,8 +53,8 @@ git_repository(
 load("@rules_python//python:repositories.bzl", "py_repositories")
 py_repositories()
 
-DEFAULT_PYTHON = "3.12"
-
+# warning: Must be identical to the version in .bazelrc
+DEFAULT_PYTHON = "3.13"
 load("@rules_python//python:repositories.bzl", "python_register_toolchains")
 python_register_toolchains(
     name = "python",
@@ -68,6 +68,8 @@ python_register_toolchains(
 #    name = "python",
 #    default_version = DEFAULT_PYTHON,
 #    python_versions = [
+#      "3.14",
+#      "3.13",
 #      "3.12",
 #      "3.11",
 #      "3.10",
@@ -79,10 +81,10 @@ python_register_toolchains(
 ## `pybind11_bazel`
 git_repository(
     name = "pybind11_bazel",
-    commit = "2b6082a4d9d163a52299718113fa41e4b7978db5",
-    #tag = "v2.13.6", # 2024/04/08
-    patches = ["//patches:pybind11_bazel.patch"],
-    patch_args = ["-p1"],
+    commit = "9017093dd5338d45bac01b489c93348666926038",
+    #tag = "v3.0.0",
+    #patches = ["//patches:pybind11_bazel.patch"],
+    #patch_args = ["-p1"],
     remote = "https://github.com/pybind/pybind11_bazel.git",
 )
 
@@ -91,8 +93,8 @@ git_repository(
 new_git_repository(
     name = "pybind11",
     build_file = "@pybind11_bazel//:pybind11-BUILD.bazel",
-    commit = "a2e59f0e7065404b44dfe92a28aca47ba1378dc4",
-    #tag = "v2.13.6",
+    commit = "ed5057ded698e305210269dafa57574ecf964483",
+    #tag = "v3.0.0",
     remote = "https://github.com/pybind/pybind11.git",
 )
 
