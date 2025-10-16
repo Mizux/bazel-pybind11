@@ -109,10 +109,10 @@ git_repository(
 ## Re2
 git_repository(
     name = "re2",
-    commit = "6dcd83d60f7944926bfd308cc13979fc53dd69ca",
-    #tag = "2024-07-02",
+    commit = "0f6c07eae69151e606acb3d9232750c3442dff23",
+    #tag = "2025-08-12",
     remote = "https://github.com/google/re2.git",
-    #repo_mapping = {"@abseil-cpp": "@com_google_absl"},
+    #repo_mapping = {"@com_google_absl": "@abseil-cpp"},
 )
 
 # Testing
@@ -122,4 +122,5 @@ git_repository(
     commit = "52eb8108c5bdec04579160ae17225d66034bd723",
     #tag = "v1.17.0",
     remote = "https://github.com/google/googletest.git",
+    #repo_mapping = {"@com_google_absl": "@abseil-cpp"},
 )
