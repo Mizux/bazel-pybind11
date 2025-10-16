@@ -99,8 +99,8 @@ new_git_repository(
 ## Abseil-cpp
 git_repository(
     name = "abseil-cpp",
-    commit = "987c57f325f7fa8472fa84e1f885f7534d391b0d",
-    #tag = "20250814.0",
+    commit = "d38452e1ee03523a208362186fd42248ff2609f6",
+    #tag = "20250814.1",
     remote = "https://github.com/abseil/abseil-cpp.git",
 )
 
