@@ -63,21 +63,6 @@ python_register_toolchains(
     python_version = DEFAULT_PYTHON,
 )
 
-#load("@rules_python//python:repositories.bzl", "python_register_multi_toolchains")
-#python_register_multi_toolchains(
-#    name = "python",
-#    default_version = DEFAULT_PYTHON,
-#    python_versions = [
-#      "3.14",
-#      "3.13",
-#      "3.12",
-#      "3.11",
-#      "3.10",
-#      "3.9",
-#    ],
-#    ignore_root_user_error=True,
-#)
-
 ## `pybind11_bazel`
 git_repository(
     name = "pybind11_bazel",
