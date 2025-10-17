@@ -13,10 +13,10 @@ jobs:
     strategy:
       matrix:
         python: [
-          #{version: '3.9'},
           #{version: '3.10'},
-          {version: '3.11'},
+          #{version: '3.11'},
           {version: '3.12'},
+          {version: '3.13'},
         ]
       fail-fast: false # Don't cancel all jobs if one fails.
     name: windows•Bazel•Py${{matrix.python.version}}
