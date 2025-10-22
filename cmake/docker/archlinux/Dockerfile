@@ -28,8 +28,7 @@ RUN CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test -v
 # Test install rules
 FROM env AS install_env
 COPY --from=build /home/project/build/python/dist/*.whl ./
-RUN python -m pip install --find-links=. \
- --break-system-packages \
+RUN python -m pip install --break-system-packages --find-links=. \
  bp11*.whl
 
 FROM install_env AS install_devel
