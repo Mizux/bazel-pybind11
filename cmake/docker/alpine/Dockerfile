@@ -6,7 +6,7 @@ FROM alpine:edge AS env
 ENV PATH=/usr/local/bin:$PATH
 RUN apk add --no-cache \
  git build-base linux-headers cmake \
- python3 python3-dev py3-pip py3-wheel \
+ python3 python3-dev py3-pip py3-setuptools py3-wheel \
  py3-virtualenv \
  py3-mypy
 
