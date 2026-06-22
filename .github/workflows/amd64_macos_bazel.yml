@@ -13,7 +13,7 @@ jobs:
     name: MacOS•Bazel
     runs-on: macos-15-intel
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Show Bazel version
         run: bazel version
       - name: Build
@@ -25,4 +25,4 @@ jobs:
     runs-on: ubuntu-latest
     needs: native
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
