@@ -5,7 +5,7 @@ FROM archlinux:latest AS env
 # Install system build dependencies
 ENV PATH=/usr/local/bin:$PATH
 RUN pacman -Syu --noconfirm \
- git base-devel bazel \
+ git base-devel bazelisk \
  python
 
 FROM env AS devel
