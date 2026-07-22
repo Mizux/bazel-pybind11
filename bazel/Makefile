@@ -34,7 +34,6 @@ help:
 	@echo -e "\t\t${BOLD}opensuse${RESET} (tumbleweed)"
 	@echo -e "\t\t${BOLD}rockylinux${RESET} (9)"
 	@echo -e "\t\t${BOLD}ubuntu${RESET} (rolling)"
-	@echo -e "\t\t${BOLD}workspace${RESET} (ubuntu rolling) using bazel workspace mode"
 	@echo -e "\t\t${BOLD}all${RESET} trigger ALL DISTROS."
 	@echo
 	@echo -e "\tWith ${BOLD}<stage>${RESET}:"
@@ -117,8 +116,7 @@ DISTROS := \
  fedora \
  opensuse \
  rockylinux \
- ubuntu \
- workspace
+ ubuntu
 
 # $* stem
 # $< first prerequist
