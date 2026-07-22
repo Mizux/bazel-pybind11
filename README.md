@@ -51,7 +51,7 @@ note: A CMake support is also provided as comparison
 
 You'll need:
 
-* "Bazel >= 7.0".
+* "Bazel >= 8.0".
 * "CMake >= 3.25".
 
 ## Codemap
@@ -59,7 +59,6 @@ You'll need:
 The project layout is as follow:
 
 * [MODULE.bazel](MODULE.bazel) Top-level for [Bazel](https://bazel.build) based build.
-* [WORKSPACE](WORKSPACE) Top-level for [Bazel](https://bazel.build) legacy based build.
 * [CMakeLists.txt](CMakeLists.txt) Top-level for [CMake](https://cmake.org) based build.
 * [pure_lib](pure_lib) Pure python library to check Bazel Python support.
 * [bp11](bp11) Python package name.
